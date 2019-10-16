@@ -9,10 +9,17 @@ library.add(faGithub, faCircle);
 dom.watch();
 
 
-$("#join-back").click(() => {
+$("#host-back, #join-back").click(() => {
     $("#view-join").addClass("hidden");
+    $("#view-host").addClass("hidden");
     $("#view-home").removeClass("hidden");
-})
+});
+
+$("#home-host").click(() => {
+    $("#view-home").addClass("hidden");
+    $("#view-host").removeClass("hidden");
+});
+
 
 $("#home-join").click(() => {
     $("#view-home").addClass("hidden");

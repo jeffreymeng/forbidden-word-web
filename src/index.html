@@ -1,6 +1,8 @@
 <html>
 	<head>
-		<meta charset="utf-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Forbidden Words</title>
         <link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|EB+Garamond&display=swap" rel="stylesheet">
 	</head>
@@ -9,31 +11,64 @@
             <div id="items">
                 <h1>FORBIDDEN WORDS</h1>
                 <p>A game of ulterior motives and fake conversations.</p>
-                <div id="buttons">
-                    <table>
-                        <tr>
-                            <th><button class="press left" id="home-host">Host Game</button></th>
-                            <th><button class="press middle" id="home-join">Join Game</button></th>
-                            <th><button class="press right" id="home-rules">Rules</button></th>
-                        </tr>
-                    </table>
+                <div id="view-home">
+                    <p>
+                        <button class="press left" id="home-host">Host Game</button>
+                        <button class="press middle" id="home-join">Join Game</button>
+                        <a class="btn press right" href="/rules.html">Rules</a></th>
+
+                    </p>
+                </div>
+                <div class="hidden" id="view-join">
+                    <form onsubmit="return false">
+                        <button id="join-back">Back to home</button>
+                        <h3>Join Game</h3>
+                        <div class="form-group">
+                            <label for="join-code">
+                                Game Code:
+                            </label>
+                            <input id="join-code" />
+                        </div>
+                        <div class="form-group">
+                            <label for="join-name">
+                                Your name:
+                            </label>
+                            <input id="join-name" />
+                        </div>
+                        <button type="submit" id="join-btn">Join</button>
+                    </form>
+                </div>
+                <div class="hidden" id="view-host">
+                    <form onsubmit="return false">
+                        <button id="host-back">Back to home</button>
+                        <h3>Host Game</h3>
+                        <div class="form-group">
+                            <label for="host-name">
+                                Your name:
+                            </label>
+                            <input id="host-name" />
+                        </div>
+                        <div class="form-group">
+
+
+                            <label for="forehead">
+                                <input type="radio" name="mode" value="forehead" id="forehead" checked>
+                                Forehead Mode
+                            </label>
+                            <label for="device">
+                                <input type="radio" name="mode" value="device" id="device">
+                                On device mode
+                            </label>
+                            <label for="pass">
+                                <input type="radio" name="mode" value="pass" id="pass">
+                                Pass and play
+                            </label>
+
+                        </div>
+                        <button type="submit" id="host-btn">Host game</button>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div id="rules">
-        </div>
-        <div class="hidden" id="view-join">
-            <button id="join-back">Back to home</button>
-            <b>Join Game</b>
-            <label for="join-code">
-                Game Code:
-            </label>
-            <input id="join-code" />
-            <label for="join-name">
-                Your name:
-            </label>
-            <input id="join-name" />
-            <button id="join-btn">Join</button>
         </div>
         <footer>
             <p id="icon">
