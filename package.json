@@ -19,8 +19,15 @@
   },
   "homepage": "https://github.com/jeffreymeng/forbidden-word#readme",
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.11.2",
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-brands-svg-icons": "^5.11.2",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.23.0",
     "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "jquery": "^3.4.1"
   }
 }
