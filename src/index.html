@@ -3,16 +3,26 @@
 		<meta charset="utf-8">
 		<title>The N-Word Game</title>
 		<link href="styles/style.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|EB+Garamond&display=swap" rel="stylesheet">
 	</head>
     <body>
-        <h1>Forbidden Words</h1>
-        <p>A game of ulterior motives and fake conversations.</p>
-        <hr>
-        <button>Join Game</button>
-        <button>Host Game</button>
-        <a>Rules</a>
-        <p><a href="https://github.com/jeffreymeng/forbidden-word">https://github.com/jeffreymeng/forbidden-word</a></p>
-        <p>Inspired by <a href="https://github.com/mpcovcd/spyfall">https://github.com/mpcovcd/spyfall</a></p>
+        <div id="top">
+            <h1>FORBIDDEN WORDS</h1>
+            <p>A game of ulterior motives and fake conversations.</p>
+        </div>
+        <div id="bottom">
+            <div id="buttons">
+                <table>
+                    <tr>
+                        <th><button class="press" id="left">Join Game</button></th>
+                        <th><button class="press" id="middle">Host Game</button></th>
+                        <th><button class="press" id="right">Rules</button></th>
+                    </tr>
+                </table>
+            </div>
+            <p><a href="https://github.com/jeffreymeng/forbidden-word">https://github.com/jeffreymeng/forbidden-word</a></p>
+            <p>Inspired by <a href="https://github.com/mpcovcd/spyfall">https://github.com/mpcovcd/spyfall</a></p>
+        </div>
         <script src="./scripts/index.ts"></script>
     </body>
 </html>
