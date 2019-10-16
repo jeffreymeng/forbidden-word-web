@@ -48,3 +48,20 @@ button {
   border-right: 1px solid #42AD86;
 }
 
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+#footer {
+  font-family: "EB Garamond", serif;
+  display: flex;
+  justify-content: center;
+  background-color: #42AD86;
+}
+
+#footer i {
+  background-color: red;
+}
