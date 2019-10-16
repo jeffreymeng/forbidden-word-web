@@ -7,16 +7,16 @@
 	</head>
     <body>
         <div id="top">
-            <h1>FORBIDDEN WORDS</h1>
+            <h1>Forbidden Words</h1>
             <p>A game of ulterior motives and fake conversations.</p>
         </div>
         <div id="bottom">
             <div id="buttons">
                 <table>
                     <tr>
-                        <th><button class="press" id="left">Join Game</button></th>
-                        <th><button class="press" id="middle">Host Game</button></th>
-                        <th><button class="press" id="right">Rules</button></th>
+                        <th><button class="press left" id="home-host">Host Game</button></th>
+                        <th><button class="press middle" id="home-join">Join Game</button></th>
+                        <th><button class="press right" id="home-rules">Rules</button></th>
                     </tr>
                 </table>
             </div>
@@ -35,10 +35,15 @@
             <button id="join-btn">Join</button>
         </div>
         <footer>
-            <div id="footer">
-                <p id="icon"><a href="https://github.com/jeffreymeng/forbidden-word"><i class="fa fab fa-github"></i></a></p>
-                <p>Copyright &copy; 2019 Jeffrey Meng and Yizhou Peng</p>
-            </div>
+            <p id="icon">
+                <a href="https://github.com/jeffreymeng/forbidden-word" class="icon-btn">
+                    <span class="fa-stack">
+                        <i class="fas fa-circle fa-stack-2x"></i>
+                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                    </span>
+                </a>
+            </p>
+            <p>Copyright &copy; 2019 Jeffrey Meng and Yizhou Peng</p>
         </footer>
         <script src="./scripts/index.ts"></script>
     </body>

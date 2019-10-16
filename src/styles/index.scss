@@ -16,6 +16,7 @@ body {
 
 h1 {
   font-family: "Big Shoulders Text", cursive;
+  text-transform: uppercase;
   font-size: 72px;
   margin: 0 0 0 3px;
 }
@@ -48,7 +49,7 @@ button:hover {
   color: #5FFAC1;
 }
 
-#left, #middle {
+.press.left, .press.middle {
   border-right: 1px solid #42AD86;
 }
 
@@ -59,13 +60,14 @@ footer {
   width: 100%;
 }
 
-#footer {
+footer {
   font-family: "EB Garamond", serif;
-  display: flex;
-  justify-content: center;
+  text-align: center;
   background-color: #42AD86;
 }
 
-#icon {
-  padding: 5px 10px;
+.icon-btn {
+  &:hover {
+    color: #8229d6;
+  }
 }
