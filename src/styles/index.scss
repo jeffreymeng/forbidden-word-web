@@ -44,6 +44,10 @@ button {
   color: #42AD86;
 }
 
+button:hover {
+  color: #5FFAC1;
+}
+
 #left, #middle {
   border-right: 1px solid #42AD86;
 }
@@ -62,6 +66,6 @@ footer {
   background-color: #42AD86;
 }
 
-#footer i {
-  background-color: red;
+#icon {
+  padding: 5px 10px;
 }
