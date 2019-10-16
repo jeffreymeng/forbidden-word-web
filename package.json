@@ -1,0 +1,26 @@
+{
+  "name": "forbidden-word",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffreymeng/forbidden-word.git"
+  },
+  "keywords": [],
+  "author": "Jeffrey Meng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jeffreymeng/forbidden-word/issues"
+  },
+  "homepage": "https://github.com/jeffreymeng/forbidden-word#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.23.0",
+    "typescript": "^3.6.4"
+  }
+}
