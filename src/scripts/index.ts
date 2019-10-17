@@ -8,20 +8,38 @@ import $ from "jquery";
 library.add(faGithub, faCircle);
 dom.watch();
 
-
-$("#host-back, #join-back").click(() => {
-    $("#view-join").addClass("hidden");
-    $("#view-host").addClass("hidden");
-    $("#view-home").removeClass("hidden");
-});
+async function validateJoinCode() {
+    return new Promise<boolean>((resolve, reject) => {
+        resolve(true);
+    });
+}
 
 $("#home-host").click(() => {
-    $("#view-home").addClass("hidden");
+    $(".view").addClass("hidden");
     $("#view-host").removeClass("hidden");
 });
 
-
 $("#home-join").click(() => {
-    $("#view-home").addClass("hidden");
+    $(".view").addClass("hidden");
     $("#view-join").removeClass("hidden");
+});
+
+$("#home-rules").click(() => {
+    $(".view").addClass("hidden");
+    $("#view-rules").removeClass("hidden");
+});
+
+$("#join-btn").click(function() {
+
+    let code = $("#join-code").val();
+    let name = encodeURIComponent($("#join-name").val());
+    console.log("start");
+    validateJoinCode().then((valid) => {
+        if (valid) {
+            window.location.href = `game.html?from=home&code=${code}&name=${name}`;
+        } else {
+            alert("invalid");
+        }
+    });
+
 });

@@ -9,19 +9,18 @@
     <body>
         <div id="top">
             <div id="items">
-                <h1>FORBIDDEN WORDS</h1>
+                <h1 class="title">Forbidden Words</h1>
                 <p>A game of ulterior motives and fake conversations.</p>
-                <div id="view-home">
+                <nav>
                     <p>
                         <button class="press left" id="home-host">Host Game</button>
                         <button class="press middle" id="home-join">Join Game</button>
-                        <a class="btn press right" href="/rules.html">Rules</a></th>
+                        <button class="press right" id="home-rules">Rules</button></th>
 
                     </p>
-                </div>
-                <div class="hidden" id="view-join">
+                </nav>
+                <div class="hidden view" id="view-join">
                     <form onsubmit="return false">
-                        <button id="join-back">Back to home</button>
                         <h3>Join Game</h3>
                         <div class="form-group">
                             <label for="join-code">
@@ -38,9 +37,8 @@
                         <button type="submit" id="join-btn">Join</button>
                     </form>
                 </div>
-                <div class="hidden" id="view-host">
+                <div class="hidden view" id="view-host">
                     <form onsubmit="return false">
-                        <button id="host-back">Back to home</button>
                         <h3>Host Game</h3>
                         <div class="form-group">
                             <label for="host-name">
@@ -67,6 +65,13 @@
                         </div>
                         <button type="submit" id="host-btn">Host game</button>
                     </form>
+                </div>
+                <div class="hidden view" id="view-rules">
+                    <div class="rules">
+                        <h3>How to Play</h3>
+                        <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
+                        <p>It suddenly struck me that that tiny pea, pretty and blue, was the Earth. I put up my thumb and shut one eye, and my thumb blotted out the planet Earth. I didn’t feel like a giant. I felt very, very small.</p>
+                    </div>
                 </div>
             </div>
         </div>
