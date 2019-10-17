@@ -49,11 +49,17 @@ p {
   justify-content: center;
 }
 
-button {
+button, a.btn {
+  padding: 7px;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+button, a.btn {
   color: #42AD86;
 }
 
-button:hover {
+button:hover, a.btn:hover {
   color: #5FFAC1;
 }
 
@@ -61,11 +67,6 @@ button:hover {
   border-right: 1px solid #42AD86;
 }
 
-#right {
-  text-decoration: none;
-  color: #42AD86;
-  font-weight: normal;
-}
 
 footer {
   position: fixed;
