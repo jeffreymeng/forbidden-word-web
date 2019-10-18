@@ -72,25 +72,6 @@ button.selected {
 }
 
 
-//@media only screen and (min-width: 503px) {
-//  .press:not(:last-child) {
-//    border-right: 1px solid #42AD86;
-//  }
-//}
-//@media only screen and (max-width: 502px) and (min-width: 394px) {
-//  // Is this a hack? Maaaybe
-//  // TODO: make not a hack
-//  .press:and(:not(:last-child),:not(:first-child)) {
-//    border-right: 1px solid #42AD86;
-//  }
-//}
-//@media only screen and (max-width: 393px) {
-//  // Is this a hack? Maaaybe
-//  // TODO: make not a hack
-//  .press:not(:first-child) {
-//    border-right: 1px solid #42AD86;
-//  }
-//}
 footer {
   position: fixed;
   left: 0;
