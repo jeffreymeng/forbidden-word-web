@@ -9,25 +9,27 @@ body {
 
 #top {
   text-align: center;
-  color: #FFD866;
   width: 100%;
   height: 100%;
 }
 
 #items {
   position: relative;
-  padding: calc(25% - 30px) 0;
+  padding: 12.5%;
 }
 
 h1 {
   font-family: "Big Shoulders Text", cursive;
   text-transform: uppercase;
-  font-size: 72px;
-  margin: 0 0 0 3px;
+  font-size: 140px;
+  margin: 0;
   vertical-align: middle;
+  color: #FFD866;
 }
 
-#top+p {
+p {
+  font-size: 30px;
+  color: #FFD866;
   font-family: "EB Garamond", serif;
 }
 
@@ -38,7 +40,7 @@ h1 {
   cursor: pointer;
   overflow: hidden;
   outline: none;
-  font-size: 24px;
+  font-size: 36px;
   font-family: "Big Shoulders Text", cursive;
 }
 
@@ -82,9 +84,10 @@ footer {
   }
 }
 
-.rules {
-  width: 50%;
-  text-align: center;
+#rules {
+  height: 100%;
+  background-color: #2C396E;
+  color: #FFD866;
 }
 
 .title {
@@ -108,4 +111,13 @@ input.uppercase {
 }
 ::placeholder { /* Recent browsers */
   text-transform: none;
+}
+#rules+h1 {
+  margin: 100px;
+  background-color: red;
+}
+
+#rules+p {
+  display: block;
+  width: 100px;
 }

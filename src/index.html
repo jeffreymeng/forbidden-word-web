@@ -75,17 +75,35 @@
                 </div>
             </div>
         </div>
-        <footer>
-            <p id="icon">
-                <a href="https://github.com/jeffreymeng/forbidden-word" class="icon-btn">
-                    <span class="fa-stack">
-                        <i class="fas fa-circle fa-stack-2x"></i>
-                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                    </span>
-                </a>
-            </p>
-            <p>Copyright &copy; 2019 Jeffrey Meng and Yizhou Peng</p>
-        </footer>
+        <div id="rules">
+            <h1>RULES</h1>
+            <p>Forbidden Words is a simple social game. Each player is given a hidden word (hence "forbidden words") and upon saying the word they lose.</p>
+        </div>
+        <div class="hidden" id="view-join">
+            <button id="join-back">Back to home</button>
+            <b>Join Game</b>
+            <label for="join-code">
+                Game Code:
+            </label>
+            <input id="join-code" />
+            <label for="join-name">
+                Your name:
+            </label>
+            <input id="join-name" />
+            <button id="join-btn">Join</button>
+        </div>
+<!--        <footer>-->
+<!--            <p id="icon">-->
+<!--                <a href="https://github.com/jeffreymeng/forbidden-word" class="icon-btn">-->
+<!--                    <span class="fa-stack">-->
+<!--                        <i class="fas fa-circle fa-stack-2x"></i>-->
+<!--                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>-->
+<!--                    </span>-->
+<!--                </a>-->
+<!--            </p>-->
+<!--            <p>Copyright &copy; 2019 Jeffrey Meng and Yizhou Peng</p>-->
+<!--        </footer>-->
+
         <script src="./scripts/index.ts"></script>
     </body>
 </html>
