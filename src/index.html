@@ -10,7 +10,7 @@
         <div id="top">
             <div id="items">
                 <h1>Forbidden Words</h1>
-                <p>A game of ulterior motives and fake conversations.</p>
+                <p class="subtitle">A game of ulterior motives and fake conversations.</p>
                 <nav>
                     <p>
                         <button class="press left" id="home-host">Host Game</button>
@@ -21,7 +21,6 @@
                 </nav>
                 <div class="hidden view" id="view-join">
                     <form onsubmit="return false">
-                        <h3>Join Game</h3>
                         <div class="form-group">
                             <label for="join-code">
                                 Game Code:
@@ -39,7 +38,6 @@
                 </div>
                 <div class="hidden view" id="view-host">
                     <form onsubmit="return false">
-                        <h3>Host Game</h3>
                         <div class="form-group">
                             <label for="host-name">
                                 Your name:
@@ -63,35 +61,22 @@
                             </label>
 
                         </div>
+                        <p class="error hidden" id="noNameError">Please enter a name (names may not be only whitespace).</p>
                         <button type="submit" id="host-btn">Host game</button>
                     </form>
                 </div>
                 <div class="hidden view" id="view-rules">
                     <div class="rules">
-                        <h3>How to Play</h3>
-                        <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
-                        <p>It suddenly struck me that that tiny pea, pretty and blue, was the Earth. I put up my thumb and shut one eye, and my thumb blotted out the planet Earth. I didn’t feel like a giant. I felt very, very small.</p>
+                        <p>Forbidden word is a simple social deduction game. Each player is randomly assigned another player to create a forbidden word for.
+                        Each player knows everybody else's word but their own. Once the game starts, there is only one goal: don't say your word before others say theirs.
+                        It's against the spirit of the to avoid talking, or giving answers that are too succinct. The game is best when everybody treats it like
+                        a normal conversation. You also can't excessively use other languages, hand gestures, or other non-verbal to communicate (using it to avoid
+                            a particular word is usually ok, but any more than a phrase and that's bad).</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="rules">
-            <h1>RULES</h1>
-            <p>Forbidden Words is a simple social game. Each player is given a hidden word (hence "forbidden words") and upon saying the word they lose.</p>
-        </div>
-        <div class="hidden" id="view-join">
-            <button id="join-back">Back to home</button>
-            <b>Join Game</b>
-            <label for="join-code">
-                Game Code:
-            </label>
-            <input id="join-code" />
-            <label for="join-name">
-                Your name:
-            </label>
-            <input id="join-name" />
-            <button id="join-btn">Join</button>
-        </div>
+
 <!--        <footer>-->
 <!--            <p id="icon">-->
 <!--                <a href="https://github.com/jeffreymeng/forbidden-word" class="icon-btn">-->

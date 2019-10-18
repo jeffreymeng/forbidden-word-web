@@ -54,6 +54,14 @@ async function generateRandomId(tries = 0, minLength = 5) {
 $("#home-host").click(() => {
     $(".view").addClass("hidden");
     $("#view-host").removeClass("hidden");
+    $(".selected")
+            .removeClass("selected")
+            .removeAttr("tabindex")
+            .removeAttr("disabled");
+    $("#home-host")
+            .addClass("selected")
+            .attr("tabindex", -1)
+            .attr("disabled", "disabled");
     $("#host-name").focus();
 });
 
@@ -61,12 +69,28 @@ $("#home-join").click(() => {
 
     $(".view").addClass("hidden");
     $("#view-join").removeClass("hidden");
+    $(".selected")
+            .removeClass("selected")
+            .removeAttr("tabindex")
+            .removeAttr("disabled");;
+    $("#home-join")
+            .addClass("selected")
+            .attr("tabindex", -1)
+            .attr("disabled", "disabled");
     $("#join-code").focus();
 });
 
 $("#home-rules").click(() => {
     $(".view").addClass("hidden");
     $("#view-rules").removeClass("hidden");
+    $(".selected")
+            .removeClass("selected")
+            .removeAttr("tabindex")
+            .removeAttr("disabled");
+    $("#home-rules")
+            .addClass("selected")
+            .attr("tabindex", -1)
+            .attr("disabled", "disabled");
 });
 
 $("#join-btn").click(function() {
@@ -76,7 +100,7 @@ $("#join-btn").click(function() {
     console.log("start");
     validateJoinCode().then((valid) => {
         if (valid) {
-            window.location.href = `game.html?from=home&code=${code}&name=${name}`;
+            window.location.href = `game.html?from=home-join&code=${code}&name=${name}`;
         } else {
             alert("invalid");
         }
@@ -85,7 +109,11 @@ $("#join-btn").click(function() {
 });
 
 $("#host-btn").click(function() {
-
+    let name = $("#host-name").val();
+    if (name.replace(/\s/g,"") === "") {
+        $("#noNameError").removeClass("hidden");
+        return;
+    }
     generateRandomId().then(function(id) {
         if (id === false) {
             alert("error");
@@ -100,9 +128,10 @@ $("#host-btn").click(function() {
                     timestamp:new Date().getTime(),
                     active:true,
                     users:[
-                        $("#host-name").val()
+                        name
                     ]
                 }).then(function() {
+                    window.location.href = `game.html?from=home-host&code=${id}&name=${name}`;
                     console.log("DONE");
                 }).catch(function(e) {
                     console.log("ERROR", e);
