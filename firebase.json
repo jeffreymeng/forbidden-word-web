@@ -6,12 +6,10 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "/game/*",
-        "destination": "/game.html"
-      }
-    ],
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }],
     "cleanUrls": true,
     "trailingSlash": true
   },

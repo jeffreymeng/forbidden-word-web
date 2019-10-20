@@ -1,0 +1,21 @@
+[debug] [2019-10-18T02:47:12.131Z] ----------------------------------------------------------------------
+[debug] [2019-10-18T02:47:12.133Z] Command:       /Users/jmeng/.nvm/versions/node/v12.12.0/bin/node /Users/jmeng/.nvm/versions/node/v12.12.0/bin/firebase deploy --only hosting
+[debug] [2019-10-18T02:47:12.133Z] CLI Version:   7.6.1
+[debug] [2019-10-18T02:47:12.133Z] Platform:      darwin
+[debug] [2019-10-18T02:47:12.133Z] Node Version:  v12.12.0
+[debug] [2019-10-18T02:47:12.133Z] Time:          Thu Oct 17 2019 19:47:12 GMT-0700 (Pacific Daylight Time)
+[debug] [2019-10-18T02:47:12.133Z] ----------------------------------------------------------------------
+[debug] [2019-10-18T02:47:12.133Z] 
+[debug] [2019-10-18T02:47:12.140Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-10-18T02:47:12.141Z] > authorizing via signed-in user
+[debug] [2019-10-18T02:47:12.141Z] [iam] checking project forbidden-word-online for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-10-18T02:47:12.142Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-10-18T02:47:12.142Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-10-18T02:47:12.294Z] <<< HTTP RESPONSE 200
+[debug] [2019-10-18T02:47:12.307Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/forbidden-word-online:testIamPermissions  
+
+[debug] [2019-10-18T02:47:12.522Z] <<< HTTP RESPONSE 200
+[debug] [2019-10-18T02:47:12.523Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/forbidden-word-online  
+ 
+[debug] [2019-10-18T02:47:12.863Z] <<< HTTP RESPONSE 200
