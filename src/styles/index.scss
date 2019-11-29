@@ -66,9 +66,19 @@ button {
 button:hover, button:focus {
   color: #5FFAC1;
 }
+
 button.selected {
   color: #FFD866;
   cursor: default;
+}
+
+#slider-left {
+  height: 2vh;
+  width: 100px;
+  background-color: white;
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 
