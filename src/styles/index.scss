@@ -133,19 +133,41 @@ nav {
     background-color: white;
     border-radius: 2vh;
     padding: 10px !important;
-    font-size: 3vh;
-    font-family: font(subtitle);
+    font-size: 2vh;
+    font-family: font(other);
     width: 80vw;
     box-shadow: 3px 3px 10px 1px rgba(23,23,23,1);
 
+    @include desktop {
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        grid-column-start: 4;
+        grid-column-end: 5;
+        width: 30vw;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
     .form-group {
         padding: 5px !important;
+
+        @include desktop {
+            margin: 10px;
+        }
 
         input {
             border: none;
             border-bottom: 1px solid black;
             font-size: 2vh;
             font-family: font(other);
+
+            @include desktop {
+                width: 300px;
+            }
         }
 
         input:focus {
@@ -159,30 +181,17 @@ nav {
         text-decoration: none;
         font-size: 3vh;
         font-family: font(other);
+        margin: 0 auto;
+        padding: 5px;
+
+        @include desktop {
+            margin: 0;
+            padding: 0 0.5em;
+            border-radius: 15px;
+        }
     }
 
     .rules {
         font-size: 2vh;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
