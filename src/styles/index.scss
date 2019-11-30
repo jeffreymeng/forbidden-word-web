@@ -159,14 +159,14 @@ nav {
             margin: 10px;
         }
 
-        input {
+        input[type=text] {
             border: none;
             border-bottom: 1px solid black;
             font-size: 2vh;
             font-family: font(other);
 
             @include desktop {
-                width: 300px;
+                width: 20vw;
             }
         }
 
@@ -185,7 +185,8 @@ nav {
         padding: 5px;
 
         @include desktop {
-            margin: 0;
+            width: 20vw;
+            margin: 0 auto;
             padding: 0 0.5em;
             border-radius: 15px;
         }
@@ -193,5 +194,34 @@ nav {
 
     .rules {
         font-size: 2vh;
+
+        @include desktop {
+            text-align: right;
+        }
+    }
+
+    .radio {
+        display: block
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
