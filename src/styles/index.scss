@@ -19,7 +19,7 @@ $colors: (
 }
 
 @mixin desktop {
-    @media (min-width: 500px) {
+    @media (min-width: 800px) {
         @content;
     }
 }
@@ -39,7 +39,7 @@ html, body, #top, #items {
     z-index: -1;
 
     @include desktop {
-        clip-path: polygon(0 0, 70% 0, 55% 100%, 0% 100%);
+        clip-path: polygon(0 0, 60% 0, 45% 100%, 0% 100%);
     }
 }
 
@@ -53,13 +53,11 @@ html, body, #top, #items {
     @include desktop {
         height: 100%;
         width: 100%;
-        position: absolute;
         display: grid;
-        grid-template-columns: 50% auto;
+        justify-items: start;
+        grid-template-columns: 5vw 40vw 15vw 40vw;
         grid-template-rows: 100%;
         text-align: left;
-        grid-auto-flow: column;
-        justify-items: start;
     }
 
     #up {
@@ -69,11 +67,20 @@ html, body, #top, #items {
             padding: 0;
         }
 
+        @include desktop {
+            grid-column-start: 2;
+            grid-column-end: 3;
+        }
+
         h1 {
             color: color(main);
             font-family: font(heading);
             font-size: 10vh;
             margin: 0 10px; 
+
+            @include desktop {
+                margin: 0;
+            }
         }
 
         .subtitle {
@@ -90,10 +97,14 @@ html, body, #top, #items {
 
 nav {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
     margin: 10px 0 !important;
+
+    @include desktop {
+        align-items: flex-start;
+    }
 
     button {
         margin: 5px !important; 
@@ -107,6 +118,14 @@ nav {
         text-transform: uppercase;
         background-color: color(button);
         color: white;
+
+        @include desktop {
+            width: 5em;
+            text-align: left;
+            background-color: color(bg);
+            border: none;
+            text-decoration: underline;
+        }
     }
 }
 
