@@ -4,21 +4,22 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Forbidden Words</title>
-        <link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|EB+Garamond&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|EB+Garamond|Poppins&display=swap" rel="stylesheet">
 	</head>
     <body>
+        <div id="bg"></div>
         <div id="top">
             <div id="items">
-                <h1>Forbidden Words</h1>
-                <p class="subtitle">A game of ulterior motives and fake conversations.</p>
-                <nav>
-                    <p>
+                <section id="up">
+                    <h1>Forbidden Words</h1>
+                    <p class="subtitle">A game of ulterior motives and fake conversations.</p>
+                    <nav>
                         <button class="press left" id="home-host">Host Game</button>
                         <button class="press middle" id="home-join">Join Game</button>
                         <button class="press right" id="home-rules">Rules</button>
-                    </p>
-                </nav>
-                <div class="hidden view" id="view-join">
+                    </nav>
+                </section>
+                <section class="hidden view card" id="view-join">
                     <form onsubmit="return false">
                         <div class="form-group">
                             <label for="join-code">
@@ -35,11 +36,11 @@
                         <button type="submit" id="join-btn">Join</button>
                         <p class="error" id="join-error"></p>
                     </form>
-                </div>
+                </section>
                 <div class="hidden view" id="view-lobby">
                     <h3>Lobby</h3>
                 </div>
-                <div class="hidden view" id="view-host">
+                <section class="hidden view card" id="view-host">
                     <form onsubmit="return false">
                         <div class="form-group">
                             <label for="host-name">
@@ -48,8 +49,6 @@
                             <input id="host-name" type="text" />
                         </div>
                         <div class="form-group">
-
-
                             <label for="forehead">
                                 <input type="radio" name="mode" value="forehead" id="forehead" checked>
                                 Forehead Mode
@@ -67,8 +66,8 @@
                         <p class="error hidden" id="noNameError">Please enter a name (names may not be only whitespace).</p>
                         <button type="submit" id="host-btn">Host game</button>
                     </form>
-                </div>
-                <div class="hidden view" id="view-rules">
+                </section>
+                <section class="hidden view card" id="view-rules">
                     <div class="rules">
                         <p>Forbidden word is a simple social deduction game. Each player is randomly assigned another player to create a forbidden word for.
                         Each player knows everybody else's word but their own. Once the game starts, there is only one goal: don't say your word before others say theirs.
@@ -76,7 +75,7 @@
                         a normal conversation. You also can't excessively use other languages, hand gestures, or other non-verbal to communicate (using it to avoid
                             a particular word is usually ok, but any more than a phrase and that's bad).</p>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
 

@@ -1,132 +1,169 @@
-// hide .hidden elements
-.hidden {
-  display:none !important;
+$fonts: (
+    heading: #{"Big Shoulders Text", cursive},
+    subtitle: #{"EB Garamond", serif},
+    other: #{"Poppins", sans-serif}
+);
+
+$colors: (
+    bg: #273361,
+    main: #FFD866,
+    button: #42AD86
+);
+
+@function color($color-name) {
+    @return map-get($colors, $color-name)
 }
 
-body {
-  background-color: #273361;
+@function font($font-name) {
+    @return map-get($fonts, $font-name)
 }
 
-#top {
-  text-align: center;
-  width: 100%;
-  height: 100%;
+@mixin desktop {
+    @media (min-width: 500px) {
+        @content;
+    }
+}
+
+html, body, #top, #items {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#bg {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: color(bg);
+    z-index: -1;
+
+    @include desktop {
+        clip-path: polygon(0 0, 70% 0, 55% 100%, 0% 100%);
+    }
 }
 
 #items {
-  position: relative;
-  padding: 12.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    @include desktop {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        display: grid;
+        grid-template-columns: 50% auto;
+        grid-template-rows: 100%;
+        text-align: left;
+        grid-auto-flow: column;
+        justify-items: start;
+    }
+
+    #up {
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: color(main);
+            font-family: font(heading);
+            font-size: 10vh;
+            margin: 0 10px; 
+        }
+
+        .subtitle {
+            color: color(button);
+            font-family: font(subtitle); 
+            font-size: 3vh;
+        }
+    }
+
+    .hidden {
+        display: none !important;
+    } 
 }
 
-h1 {
-  font-family: "Big Shoulders Text", cursive;
-  text-transform: uppercase;
-  font-size: 10vh;
-  margin: 0;
-  vertical-align: middle;
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 10px 0 !important;
+
+    button {
+        margin: 5px !important; 
+        height: 5vh;
+        border-radius: 2vh;
+        width: 70vw;
+        border: none;
+        text-decoration: none;
+        font-size: 4vh;
+        font-family: font(heading);
+        text-transform: uppercase;
+        background-color: color(button);
+        color: white;
+    }
 }
 
-.subtitle {
-  font-size: 3vh;
-  font-family: "EB Garamond", serif;
-}
-h1, h3, p, .subtitle, label {
-  color: #FFD866;
-}
-p {
-  font-size: 2vh;
-}
+.card {
+    background-color: white;
+    border-radius: 2vh;
+    padding: 10px !important;
+    font-size: 3vh;
+    font-family: font(subtitle);
+    width: 80vw;
+    box-shadow: 3px 3px 10px 1px rgba(23,23,23,1);
 
-.press {
-  background-color: Transparent;
-  background-repeat: no-repeat;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  outline: none;
-  font-size: 36px;
-  font-family: "Big Shoulders Text", cursive;
-}
+    .form-group {
+        padding: 5px !important;
 
-#buttons {
-  display: flex;
-  justify-content: center;
-}
+        input {
+            border: none;
+            border-bottom: 1px solid black;
+            font-size: 2vh;
+            font-family: font(other);
+        }
 
-button {
-  padding: 10px 20px;
-  text-decoration: none;
-  font-weight: normal;
-}
+        input:focus {
+            outline: 0;
+        }
+    }
 
-button {
-  color: #42AD86;
-}
+    button {
+        height: 5vh;
+        border: none;
+        text-decoration: none;
+        font-size: 3vh;
+        font-family: font(other);
+    }
 
-button:hover, button:focus {
-  color: #5FFAC1;
-}
-
-button.selected {
-  color: #FFD866;
-  cursor: default;
-}
-
-#slider-left {
-  height: 2vh;
-  width: 100px;
-  background-color: white;
-  position: relative;
-  top: 0;
-  left: 0;
+    .rules {
+        font-size: 2vh;
+    }
 }
 
 
-footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  font-family: "EB Garamond", serif;
-  text-align: center;
-  background-color: #42AD86;
-}
-
-.icon-btn {
-  &:hover, &:focus {
-    color: #8229d6;
-  }
-}
 
 
-.title {
-  text-transform: uppercase;
-}
 
-input.uppercase {
-  text-transform: uppercase;
-}
-::-webkit-input-placeholder { /* WebKit browsers */
-  text-transform: none;
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-  text-transform: none;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-  text-transform: none;
-}
-:-ms-input-placeholder { /* Internet Explorer 10+ */
-  text-transform: none;
-}
-::placeholder { /* Recent browsers */
-  text-transform: none;
-}
 
-.error {
-  color:red;
-}
-input[type="text"] {
-  height:50px;
-  width:200px;
-  border-radius:2px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
