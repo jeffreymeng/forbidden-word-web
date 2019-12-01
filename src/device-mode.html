@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <main>
+        <!-- This is screen 1, meaning what the user sees when the game first begins. -->
+        <section class="hidden" id="start">
+            <p>Making a word for <span id="target-user">Filler</span></p>
+            <form>
+                <label for="word">Enter the word:</label>
+                <input type="text">
+            </form>
+        </section>
+
+        <!-- This is screen 2, meaning what the user sees as he waits for other users to finish. -->
+        <section class="hidden" id="wait">
+            <p>Waiting for everyone else...</p>
+        </section>
+
+        <!-- This is screen 3, the gameplay screen, meaning what the user sees as the game is in progress. -->
+        <section class="hidden" id="play">
+            <div class="user">
+                <p class="username">Filler User</p>
+                <p class="user-word">Filler Word for User</p>
+            </div>
+            <div class="user">
+                <p class="username">Filler User #2</p>
+                <p class="user-word">Filler Word for User #2</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><span class="footer" id="game-code">A1B2</span><span class="footer" id="game-mode">Device Mode</span><span class="footer" id="user-name">slopey112</span></p>
+    </footer>
+</body>
+</html>
