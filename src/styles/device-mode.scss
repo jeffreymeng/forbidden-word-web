@@ -1,0 +1,45 @@
+$fonts: (
+    heading: #{"Big Shoulders Text", cursive},
+    subtitle: #{"EB Garamond", serif},
+    other: #{"Poppins", sans-serif}
+);
+
+$colors: (
+    bg: #273361,
+    main: #FFD866,
+    button: #42AD86
+);
+
+@function color($color-name) {
+    @return map-get($colors, $color-name)
+}
+
+@function font($font-name) {
+    @return map-get($fonts, $font-name)
+}
+
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+  	width: 100%;	
+}
+
+main {
+	height: 300%;
+	background-color: color(bg);
+	font-family: font(heading);
+	font-size: 10vh;
+}
+
+#start {
+	height: 100%;
+}
+
+#wait {
+	height: 100%;
+}
+
+#play {
+	height: 100%;
+}
