@@ -65,18 +65,16 @@ main {
 		justify-content: center;
 		flex-direction: column;
 
-        * {
-            margin: 20px;
-        }
-
         input {
             border: none;
-            border: 3px solid color(button);
-            height: 1.5em;
+            border-bottom: 3px solid color(button);
+            background-color: color(bg);
+            height: 5vh;
             font-size: 4vh;
             font-family: font(other);
+            color: color(button);
             text-align: center;
-            width: 60vw;
+            width: 40vw;
         }		
 
         input:focus {
@@ -84,14 +82,7 @@ main {
         }
 
         button {
-            height: 6vh;
-            border-radius: 2vh;
-            width: 40vw;
-            border: none;
-            text-decoration: none;
-            font-size: 4vh;
-            font-family: font(other);
-            color: black;
+            height: 3vh;
         }
 	}
 }
