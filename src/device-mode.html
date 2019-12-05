@@ -9,11 +9,13 @@
 <body>
     <main>
         <!-- This is screen 1, meaning what the user sees when the game first begins. -->
-        <section class="hidden" id="start">
-            <p>Making a word for <span id="target-user">Filler</span></p>
+        <section class="" id="start">
+			<div id="heading">
+				<span id="target-user">Filler</span>
+			</div>
             <form>
-                <label for="word">Enter the word:</label>
-                <input type="text">
+                <input type="text" placeholder="word">
+				<button id="submit">Submit</button>
             </form>
         </section>
 
@@ -36,7 +38,9 @@
     </main>
 
     <footer>
-        <p><span class="footer" id="game-code">A1B2</span><span class="footer" id="game-mode">Device Mode</span><span class="footer" id="user-name">slopey112</span></p>
+        <p class="footer" id="game-code">A1B2</p>
+		<p class="footer" id="game-mode">Device Mode</p>
+		<p class="footer" id="user-name">slopey112</p>
     </footer>
 	<script src="./scripts/device-mode.ts"></script>
 </body>
