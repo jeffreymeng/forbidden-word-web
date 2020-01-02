@@ -26,6 +26,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.12.0",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@types/jest": "^24.0.25",
+    "@types/jquery": "^3.3.31",
     "@types/xregexp": "^3.0.30",
     "firebase": "^7.6.1",
     "jest": "^24.9.0",
@@ -38,8 +39,5 @@
     "typedoc-plugin-internal-external": "^2.0.2",
     "typescript": "^3.7.4",
     "xregexp": "^4.2.4"
-  },
-  "dependencies": {
-    "@types/jquery": "^3.3.31"
   }
 }
