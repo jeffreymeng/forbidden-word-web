@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- lts/*
+cache: npm
+install:
+- npm install
+- export NODE_OPTIONS=--max_old_space_size=4096
+script:
+- npm test
+- npm run build
+- npm run docs
+env:
+  global:
+    secure: MD5nXjXSB2ji3WjSoVOScrBqyYvbOlRWLkyw59GUcRxqITSE92xH39tCfEowpFfNFjoJ+J3rbMRF5FuqY1p0MeWH2tV4GLT6m4Xdbykahuwl8h1DeOkevlKth0fiTsuuvw849nPgI+JizIW+5XePaPIePhEyNx51ZDedJPdOUqgORwadWo/9yPGlyq1U2CLiZ2acQC/eDZKRFJKJJuo30zVuXh8smynJuG3o285crAnQX+6xbcccZSzCAVPuKTUkuE8hvp1Uj6DvhZKAkmLx//yKH6/nrXeScApuQ0ODBzDf/BzhnuFWd2lkuuFKBwWfPdh0jZs7zLR9RMcQR7rITjARYhMQUboXpLMvI1UYJuEPWobZyOmYLFM7XVauC3avx1Nu6GVuIoLNBBc5rCN/m0sApYr9EzmxFRPm34DkCBt2thm+tfLWg0g7yr9bSyooVC30jC4wByIsCgeXqHRaokBD48brDgbRRm73ivPPfFrS9fzsHXjJAF75r/QY1+4nwh+DH+4MbfNt0xiIeEFr2xbcT9D0s3PKcj40j3iJRNgeJMz/Np08KqblnDA8keylPiOUiJDLRRvAtblLFUUI0C4jR3TFi2YkDYGHhtqpbZWjOVY4BbH1zEeZ/0+PT6rgsrj+vM6HEOBC7e6v1qS0FrRA2o4oh2p4lJaWymWj+Lw=

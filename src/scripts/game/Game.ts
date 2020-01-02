@@ -14,6 +14,12 @@ interface Player {
  * To link to a game that exists on the server, use new Game();
  */
 class Game {
+    // Game status constants
+    static readonly WAITING_FOR_PLAYERS = "WAITING";
+    static readonly ASSIGNING_WORDS = "ASSIGNING";
+    static readonly IN_PROGRESS = "PLAYING";
+    static readonly RESTARTING = "RESTARTING";
+
     public id: string;
     public name: string;
     public isHost: boolean;
@@ -22,12 +28,12 @@ class Game {
 
     constructor(id: string, user: User, name:string, isHost: boolean = false) {
         this.id = id;
-        if (!isHost) {
-            this.join(name, user);
-        }
         this.user = user;
         this.name = name;
         this.isHost = isHost;
+        if (!isHost) {
+            this.join(name);
+        }
     }
     test() {
         console.log(this.id, 21309);
@@ -38,51 +44,47 @@ class Game {
                     test:"2345678"
                 });
     }
-    join(name:string, user: User) {
-        let _this = this;
+    join(name:string) {
         let id = this.id;
         return firebase.firestore()
                 .collection("games")
                 .doc(id)
                 .collection("players")
-                .doc(id)
+                .doc(this.user.uid)
                 .set({
-                    id,
-                    name
+                    name,
+                    isHost:false
                 })
-                .then(function() {
-                    _this.initialized = true;
-                }).catch(function(error) {
+                .then(() => {
+                    this.initialized = true;
+                }).catch((error) => {
                     console.log(error);
                     throw error.message;
                 });
     }
     static async createGame(name: string, user: User): Promise<Game> {
 
-        let game = await generateRandomId().then(async function(id) {
+        let game = await generateRandomId().then(async function(id: string) {
 
-            if (id === false) {
-                alert("error");
-                return;
-
-            }
             console.log(id);
-            await firebase.firestore()
-                .collection("games")
-                .doc(id)
-                .collection("players")
-                .add({
-                    timestamp:new Date().getTime(),
-                    active:true,
-                    host:user.uid,
-                    players:[
-                        {
-                            id:user.uid,
-                            name:name,
-                        }
-                    ]
-                }).then(function() {
-
+            let gameData = {
+                timestamp:new Date().getTime(),
+                active:true,
+                host:user.uid,
+                status:Game.WAITING_FOR_PLAYERS
+            };
+            let gameRef = firebase.firestore()
+                    .collection("games")
+                    .doc(id);
+            await gameRef
+                .set(gameData)
+                .then(async function() {
+                    await gameRef.collection("players")
+                            .doc(user.uid)
+                            .set({
+                                name,
+                                isHost:true
+                            });
 
                     console.log("DONE: ", id);
 

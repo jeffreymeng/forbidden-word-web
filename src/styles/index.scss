@@ -7,7 +7,8 @@ $fonts: (
 $colors: (
     bg: #273361,
     main: #FFD866,
-    button: #42AD86
+    button: #42AD86,
+    danger: #dc3545
 );
 
 @function color($color-name) {
@@ -173,16 +174,22 @@ nav {
         input:focus {
             outline: 0;
         }
+
+    }
+
+    .error {
+        color: color(danger);
     }
 
     button {
-        height: 5vh;
+        height: 3.5vh;
         border: none;
         text-decoration: none;
         font-size: 3vh;
         font-family: font(other);
         margin: 0 auto;
         padding: 5px;
+        color:color(button);
 
         @include desktop {
             width: 20vw;
@@ -196,14 +203,20 @@ nav {
         font-size: 2vh;
 
         @include desktop {
-            text-align: right;
+            text-align: center;
         }
     }
 
     .radio {
         display: block
     }
+
+    .uppercase {
+        text-transform:uppercase;
+    }
 }
+
+
 
 
 

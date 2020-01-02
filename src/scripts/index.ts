@@ -3,8 +3,8 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import '../styles/index.scss';
 import $ from "jquery";
-import Game from './Game';
-import firebase from "./firebase";
+import Game from './game/Game';
+import firebase from "./game/firebase";
 import { User } from "firebase";
 
 initFonts();
@@ -19,7 +19,6 @@ async function validateJoinCode() {
 
 
 function initHandlers() {
-
     $("#home-host").click(() => {
         $(".view").addClass("hidden");
         $("#view-host").removeClass("hidden");
@@ -64,14 +63,15 @@ function initHandlers() {
 
     $("#join-btn").click(async function() {
 
-        let code = $("#join-code").val().toUpperCase();
-        let name = $("#join-name").val();
-        console.log(name)
+        let code = ($("#join-code").val() + "").toUpperCase();
+        let name = $("#join-name").val() + "";
+
+        console.log(name);
         if (name.replace(/\s/g,"") === "") {
             $("#join-error").text("Error: Names may not be only whitespace.");
             return;
         }
-        console.log(name)
+        console.log(name);
         $("#join-error").text("");
 
 
@@ -79,9 +79,15 @@ function initHandlers() {
         let valid = await validateJoinCode();
 
         if (valid) {
-            let user = await login();
-            let game = new Game(code, user, name);
-            console.log(game, code, name, user);
+            firebase.auth().onAuthStateChanged(async function(user) {
+                if (!user) {
+                    user = await login();
+                }
+                console.log(user.uid, user);
+                let game = new Game(code, user, name);
+                console.log(game, code, name, user);
+            })
+
 
         } else {
             $("#join-error").text("Error: Invalid game code.");
@@ -91,16 +97,24 @@ function initHandlers() {
     });
 
     $("#host-btn").click(async function() {
-        let name = $("#host-name").val();
+        let name = $("#host-name").val() + "";
         if (name.replace(/\s/g,"") === "") {
             $("#noNameError").removeClass("hidden");
             return;
         }
-        let user = await login();
-        let game = Game.createGame(name, user);
-        console.log(user, game);
-        (await game).test();
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (!user) {
+                user = await login();
+            }
+
+            console.log(user.uid, user);
+            let game = Game.createGame(name, user);
+            console.log(user, game);
+            (await game).test();
+        })
     });
+
+    $("#join-code").focus();
 }
 
 function initFonts() {
@@ -110,7 +124,6 @@ function initFonts() {
 }
 
 async function login(): Promise<User> {
-
     await firebase.auth().signInAnonymously().catch(function(error) {
 
         console.log(error);
@@ -119,10 +132,6 @@ async function login(): Promise<User> {
     if (firebase.auth().currentUser == null) {
         throw "Login Error";
     }
-    return new Promise<User>(function(resolve, reject) {
-        resolve(firebase.auth().currentUser);
-
-
-    });
+    return firebase.auth().currentUser;
 
 }

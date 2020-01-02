@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel src/index.html --public-url /",
+    "docs": "typedoc --exclude node_modules --exclude ./src/scripts/game/**.test.ts --ignoreCompilerErrors --out docs --target ES5 ./src/scripts/game/**",
+    "test": "jest",
     "build": "parcel build src/index.html src/game.html src/device-mode.html src/404.html"
   },
   "repository": {
@@ -19,16 +21,25 @@
   },
   "homepage": "https://github.com/jeffreymeng/forbidden-word#readme",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.11.2",
-    "@fortawesome/fontawesome-svg-core": "^1.2.25",
-    "@fortawesome/free-brands-svg-icons": "^5.11.2",
-    "@fortawesome/free-solid-svg-icons": "^5.11.2",
-    "firebase": "^7.2.1",
+    "@fortawesome/fontawesome-free": "^5.12.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-brands-svg-icons": "^5.12.0",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@types/jest": "^24.0.25",
+    "@types/xregexp": "^3.0.30",
+    "firebase": "^7.6.1",
+    "jest": "^24.9.0",
+    "jquery": "^3.4.1",
     "parcel-bundler": "^1.12.4",
-    "sass": "^1.23.0",
-    "typescript": "^3.6.4"
+    "sass": "^1.24.0",
+    "string.prototype.matchall": "^4.0.2",
+    "ts-jest": "^24.2.0",
+    "typedoc": "^0.15.6",
+    "typedoc-plugin-internal-external": "^2.0.2",
+    "typescript": "^3.7.4",
+    "xregexp": "^4.2.4"
   },
   "dependencies": {
-    "jquery": "^3.4.1"
+    "@types/jquery": "^3.3.31"
   }
 }

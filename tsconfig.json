@@ -6,6 +6,12 @@
       "es5",
       "scripthost",
       "es2015.promise"
-    ]
+    ],
+    "typeRoots": [
+      "src/scripts/customTypings",
+      "node_modules/@types"
+    ],
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true
   }
 }

@@ -14,13 +14,13 @@
                     <h1>Forbidden Words</h1>
                     <p class="subtitle">A game of ulterior motives and fake conversations.</p>
                     <nav>
-                        <button class="press left" id="home-host">Host Game</button>
-                        <button class="press middle" id="home-join">Join Game</button>
+                        <button class="press left" id="home-join">Join Game</button>
+                        <button class="press middle" id="home-host">Host Game</button>
                         <button class="press right" id="home-rules">Rules</button>
-                        <a href="device-mode.html">testing</a>
                     </nav>
                 </section>
-                <section class="hidden view card" id="view-join">
+                <section class="view card" id="view-join">
+                    <h1>Join Game</h1>
                     <form onsubmit="return false">
                         <div class="form-group">
                             <label for="join-code">
@@ -34,14 +34,12 @@
                             </label>
                             <input id="join-name" type="text" />
                         </div>
-                        <button type="submit" id="join-btn">Join</button>
+                        <button type="submit" id="join-btn">Join Game</button>
                         <p class="error" id="join-error"></p>
                     </form>
                 </section>
-                <div class="hidden view" id="view-lobby">
-                    <h3>Lobby</h3>
-                </div>
                 <section class="hidden view card" id="view-host">
+                    <h1>Host Game</h1>
                     <form onsubmit="return false">
                         <div class="form-group">
                             <label for="host-name">
@@ -50,13 +48,13 @@
                             <input id="host-name" type="text" />
                         </div>
                         <div class="form-group" id="radio-group">
-                            <label for="forehead" class="radio">
-                                <input type="radio" name="mode" value="forehead" id="forehead" checked>
-                                Forehead Mode
-                            </label>
                             <label for="device" class="radio">
-                                <input type="radio" name="mode" value="device" id="device">
+                                <input type="radio" name="mode" value="device" id="device" checked>
                                 On device mode
+                            </label>
+                            <label for="forehead" class="radio">
+                                <input type="radio" name="mode" value="forehead" id="forehead">
+                                Forehead Mode
                             </label>
                             <label for="pass" class="radio">
                                 <input type="radio" name="mode" value="pass" id="pass">
@@ -69,6 +67,7 @@
                     </form>
                 </section>
                 <section class="hidden view card" id="view-rules">
+                    <h1>Rules</h1>
                     <div class="rules">
                         <p>Forbidden word is a simple social deduction game. Each player is randomly assigned another player to create a forbidden word for.
                         Each player knows everybody else's word but their own. Once the game starts, there is only one goal: don't say your word before others say theirs.
