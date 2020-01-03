@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel src/index.html --public-url /",
+    "dev": "parcel src/index.html src/device-mode.html src/404.html --public-url /",
     "docs": "typedoc --exclude node_modules --exclude ./src/scripts/game/**.test.ts --ignoreCompilerErrors --out docs --target ES5 ./src/scripts/game/**",
     "test": "jest",
-    "build": "parcel build src/index.html src/game.html src/device-mode.html src/404.html"
+    "build": "parcel build src/index.html src/device-mode.html src/404.html"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "url": "https://github.com/jeffreymeng/forbidden-word/issues"
   },
   "homepage": "https://github.com/jeffreymeng/forbidden-word#readme",
-  "devDependencies": {
+  "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-brands-svg-icons": "^5.12.0",

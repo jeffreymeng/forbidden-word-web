@@ -4,7 +4,7 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import '../styles/index.scss';
 import $ from "jquery";
 import Game from './game/Game';
-import firebase from "./game/firebase";
+import { firebase, login } from "./game/firebase";
 import { User } from "firebase";
 
 initFonts();
@@ -71,6 +71,7 @@ function initHandlers() {
             $("#join-error").text("Error: Names may not be only whitespace.");
             return;
         }
+        $("#join-btn").attr("disabled", "disabled").text("Loading...");
         console.log(name);
         $("#join-error").text("");
 
@@ -97,11 +98,13 @@ function initHandlers() {
     });
 
     $("#host-btn").click(async function() {
+
         let name = $("#host-name").val() + "";
         if (name.replace(/\s/g,"") === "") {
             $("#noNameError").removeClass("hidden");
             return;
         }
+        $("#host-btn").attr("disabled", "disabled").text("Loading...");
         firebase.auth().onAuthStateChanged(async function(user) {
             if (!user) {
                 user = await login();
@@ -110,7 +113,6 @@ function initHandlers() {
             console.log(user.uid, user);
             let game = Game.createGame(name, user);
             console.log(user, game);
-            (await game).test();
         })
     });
 
@@ -123,15 +125,3 @@ function initFonts() {
     dom.watch();
 }
 
-async function login(): Promise<User> {
-    await firebase.auth().signInAnonymously().catch(function(error) {
-
-        console.log(error);
-        throw "Login Error. There may be additional log information above.";
-    });
-    if (firebase.auth().currentUser == null) {
-        throw "Login Error";
-    }
-    return firebase.auth().currentUser;
-
-}

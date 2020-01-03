@@ -44,8 +44,8 @@ main {
 	height: 100%;
 
 	#heading {
-        position: absolute;
-        top: 0;
+		position: absolute;
+		top: 0;
 		display: flex;
 		align-items: center;
 		background-color: color(button);
@@ -53,11 +53,12 @@ main {
 		width: 100%;
 		height: 25vw;
 		vertical-align: middle;
-		
+
 		#target-user {
 			padding: 50px;
 		}
 	}
+
 
 	form {
 		display: flex;

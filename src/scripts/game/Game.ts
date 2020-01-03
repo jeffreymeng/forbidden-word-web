@@ -4,21 +4,38 @@ import { generateRandomId } from "./utils";
 import { User }  from "firebase";
 
 interface Player {
-    id: string;
+    id?: string;
     name: string;
+    isHost: boolean;
 }
 
+interface GameData {
+    active: boolean;
+    host: string;
+    status: GameStatus;
+    timestamp: number;
+}
+enum GameStatus {
+    WAITING_FOR_PLAYERS = "WAITING_FOR_PLAYERS",
+    ASSIGNING_WORDS = "ASSIGNING_WORDS",
+    IN_PROGRESS = "IN_PROGRESS",
+    RESTARTING = "RESTARTING"
+
+}
+enum PlayerStatus {
+    READY = "READY",
+    ASSIGNING_WORDS = "ASSIGNING_WORDS",
+    IN_PROGRESS = "IN_PROGRESS"
+}
 /**
  * A Game is a representation of a forbidden word Game.
  * To create a new game on the server, use the static method Game.new().
- * To link to a game that exists on the server, use new Game();
+ * To link to a game that exists on the server, use new Game(); or Game.reconnect();.
  */
 class Game {
-    // Game status constants
-    static readonly WAITING_FOR_PLAYERS = "WAITING";
-    static readonly ASSIGNING_WORDS = "ASSIGNING";
-    static readonly IN_PROGRESS = "PLAYING";
-    static readonly RESTARTING = "RESTARTING";
+
+
+
 
     public id: string;
     public name: string;
@@ -26,6 +43,13 @@ class Game {
     public initialized: boolean;
     public user: User;
 
+    /**
+     * Create a new representation of a game.
+     * @param id - The game ID
+     * @param user - A firebase user object, containing a user ID
+     * @param name - The nickname of the user.
+     * @param isHost - Whether the user is the host of the game.
+     */
     constructor(id: string, user: User, name:string, isHost: boolean = false) {
         this.id = id;
         this.user = user;
@@ -35,15 +59,11 @@ class Game {
             this.join(name);
         }
     }
-    test() {
-        console.log(this.id, 21309);
-        firebase.firestore()
-                .collection("games")
-                .doc(this.id)
-                .update({
-                    test:"2345678"
-                });
-    }
+
+    /**
+     * Add the user to the firebase representation of the game.
+     * @param name - The nickname of the user.
+     */
     join(name:string) {
         let id = this.id;
         return firebase.firestore()
@@ -53,7 +73,7 @@ class Game {
                 .doc(this.user.uid)
                 .set({
                     name,
-                    isHost:false
+                    isHost:this.isHost
                 })
                 .then(() => {
                     this.initialized = true;
@@ -62,40 +82,74 @@ class Game {
                     throw error.message;
                 });
     }
+
+    /**
+     * Get a Game object linked to a user that has already previously joined the game. The same effect can also be achieved
+     * using new Game(), but reconnect requires less information than new Game() does.
+     * @param id - The ID of the game to reconnect to.
+     * @param user - The firebase user object of the logged in user that has already joined a game.
+     * @returns - A new Game() instance.
+     */
+    static async reconnect(id: string, user: User): Promise<Game> {
+        let gameRef = firebase.firestore()
+                .collection("games")
+                .doc(id);
+        let gameData: firebase.firestore.DocumentSnapshot | GameData = await gameRef
+                .get();
+        if (gameData.exists) {
+            gameData = <GameData>gameData.data();
+        } else {
+            throw "NoGameError: No initialized game could be found at the specified location.";
+        }
+
+        let player: firebase.firestore.DocumentSnapshot | Player = await gameRef
+                .collection("players")
+                .doc(user.uid)
+                .get();
+        if (player.exists) {
+            player = <Player>player.data();
+        } else {
+            throw "NoPlayerError: The current player is not part of the game."
+        }
+
+        return new Game(id, user, player.name, player.isHost);
+
+    }
+
+    /**
+     * Create a new game on the server, and join it as the host.
+     * @param name - The nickname for the current user.
+     * @param user - The firebase user object of the current user.
+     */
     static async createGame(name: string, user: User): Promise<Game> {
 
-        let game = await generateRandomId().then(async function(id: string) {
+        let id = await generateRandomId();
 
-            console.log(id);
-            let gameData = {
-                timestamp:new Date().getTime(),
-                active:true,
-                host:user.uid,
-                status:Game.WAITING_FOR_PLAYERS
-            };
-            let gameRef = firebase.firestore()
-                    .collection("games")
-                    .doc(id);
-            await gameRef
-                .set(gameData)
-                .then(async function() {
-                    await gameRef.collection("players")
-                            .doc(user.uid)
-                            .set({
-                                name,
-                                isHost:true
-                            });
+        let gameData = {
+            timestamp:new Date().getTime(),
+            active:true,
+            host:user.uid,
+            status:GameStatus.WAITING_FOR_PLAYERS
+        };
+        let gameRef = firebase.firestore()
+                .collection("games")
+                .doc(id);
+        await gameRef
+            .set(gameData)
+            .then(async function() {
+                await gameRef.collection("players")
+                        .doc(user.uid)
+                        .set({
+                            name,
+                            isHost:true
+                        });
 
-                    console.log("DONE: ", id);
 
-                }).catch(function(e) {
-                    console.log("ERROR", e);
-                });
-            console.log(id,user);
-            return new Game(id, user, name, true);
-        });
-console.log(game);
-        return game;
+            }).catch(function(e) {
+                console.log("ERROR", e);
+                throw e;
+            });
+        return new Game(id, user, name, true);
 
     }
 }

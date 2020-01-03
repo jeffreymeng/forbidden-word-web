@@ -1,6 +1,7 @@
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import { User } from "firebase";
 
 const config = {
     apiKey: "AIzaSyA4MSqu0TrSwd-UeokGmeA0Ia3r6G5NHng",
@@ -14,4 +15,18 @@ const config = {
 };
 firebase.initializeApp(config);
 
+async function login(): Promise<User> {
+    await firebase.auth().signInAnonymously().catch(function(error) {
+
+        console.log(error);
+        throw "Login Error. There may be additional log information above.";
+    });
+    if (firebase.auth().currentUser == null) {
+        throw "Login Error";
+    }
+    return firebase.auth().currentUser;
+
+}
+
+export { login, firebase };
 export default firebase;
