@@ -2,7 +2,12 @@ import '../styles/device-mode.scss'
 import { Game, GameData, GameStatus, Player, PlayerStatus} from './game/Game';
 import { firebase, login } from "./game/firebase";
 import { User } from "firebase";
-
+/*
+TODO:
+- GameStatus
+    - Base gameplay off this, to update simply use firebase fieldvalue increment in an update
+    - Host starts game, randomly assigns partners, can kick
+ */
 import $ from "jquery";
 async function init() {
 
@@ -23,6 +28,7 @@ async function init() {
 async function initHandlers(game) {
     $("#game-leave").on("click", async () => {
         if(confirm("Are you sure you want to leave?")) {
+            game.off("user-leave");
             await game.leave();
             // $(window).off("beforeunload", beforeUnloadHandler);
             window.location.href = "/index.html";
@@ -95,13 +101,29 @@ function processGameJoin(game: Game, user: User) {
     $("#username").text(game.username);
     initHandlers(game).then(function() {
         $("#game-leave").removeClass("hidden");
-
+        $("body").on("click", ".remove-player", function() {
+            confirm("Remove " + $(this).attr("data-userName") + $(this).attr("data-userId") + "?");
+        });
         game.on("user-join", function(e) {
             console.log("User joined", e);
             // sanitize usernames
             let userLi = document.createElement("li");
             userLi.id = "userList-user" + e.data.userId;
-            userLi.appendChild(document.createTextNode(e.data.userData.name + (e.data.userData.isHost ? " (👑)" : "")));
+            userLi.appendChild(document.createTextNode(e.data.userData.name + (e.data.userData.isHost ? " (👑)": "")));
+            if (game.isHost && !e.data.userData.isHost) {
+                let a = document.createElement('a');
+
+                a.title = "Remove Player";
+                a.id = "remove-user" + e.data.userId;
+                a.setAttribute("data-userId", e.data.userId);
+                a.setAttribute("data-userName", e.data.userData.name);
+                a.className = "remove-player";
+                a.appendChild(document.createTextNode("remove"));
+                userLi.append(document.createTextNode("("));
+                userLi.append(a);
+                userLi.append(document.createTextNode(")"));
+
+            }
             $("#user-list").append(userLi);
         });
 
