@@ -110,20 +110,7 @@ function processGameJoin(game: Game, user: User) {
             let userLi = document.createElement("li");
             userLi.id = "userList-user" + e.data.userId;
             userLi.appendChild(document.createTextNode(e.data.userData.name + (e.data.userData.isHost ? " (👑)": "")));
-            if (game.isHost && !e.data.userData.isHost) {
-                let a = document.createElement('a');
-
-                a.title = "Remove Player";
-                a.id = "remove-user" + e.data.userId;
-                a.setAttribute("data-userId", e.data.userId);
-                a.setAttribute("data-userName", e.data.userData.name);
-                a.className = "remove-player";
-                a.appendChild(document.createTextNode("remove"));
-                userLi.append(document.createTextNode("("));
-                userLi.append(a);
-                userLi.append(document.createTextNode(")"));
-
-            }
+            
             $("#user-list").append(userLi);
         });
 
