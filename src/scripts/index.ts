@@ -10,11 +10,6 @@ import { User } from "firebase";
 initFonts();
 initHandlers();
 
-async function validateJoinCode() {
-    return new Promise<boolean>((resolve, reject) => {
-        resolve(true);
-    });
-}
 
 
 
@@ -23,13 +18,9 @@ function initHandlers() {
         $(".view").addClass("hidden");
         $("#view-host").removeClass("hidden");
         $(".selected")
-                .removeClass("selected")
-                .removeAttr("tabindex")
-                .removeAttr("disabled");
+                .removeClass("selected");
         $("#home-host")
-                .addClass("selected")
-                .attr("tabindex", -1)
-                .attr("disabled", "disabled");
+                .addClass("selected");
         $("#host-name").focus();
     });
 
@@ -38,13 +29,9 @@ function initHandlers() {
         $(".view").addClass("hidden");
         $("#view-join").removeClass("hidden");
         $(".selected")
-                .removeClass("selected")
-                .removeAttr("tabindex")
-                .removeAttr("disabled");
+                .removeClass("selected");
         $("#home-join")
-                .addClass("selected")
-                .attr("tabindex", -1)
-                .attr("disabled", "disabled");
+                .addClass("selected");
         $("#join-code").focus();
     });
 
@@ -52,13 +39,9 @@ function initHandlers() {
         $(".view").addClass("hidden");
         $("#view-rules").removeClass("hidden");
         $(".selected")
-                .removeClass("selected")
-                .removeAttr("tabindex")
-                .removeAttr("disabled");
+                .removeClass("selected");
         $("#home-rules")
-                .addClass("selected")
-                .attr("tabindex", -1)
-                .attr("disabled", "disabled");
+                .addClass("selected");
     });
 
     $("#join-btn").click(async function() {
@@ -77,7 +60,7 @@ function initHandlers() {
 
 
         console.log("start");
-        let valid = await validateJoinCode();
+        let valid = await Game.validateJoinCode(code);
 
         if (valid) {
             firebase.auth().onAuthStateChanged(async function(user) {
@@ -86,13 +69,19 @@ function initHandlers() {
                 }
                 console.log(user.uid, user);
                 let game = new Game(code, user, name);
-                console.log(game, code, name, user);
+                if (game.initialized) {
+                    window.location.href = "/game.html#" + code;
+                }
+                game.on("initialized", function() {
+                    window.location.href = "/game.html#" + code;
+                });
+
             })
 
 
         } else {
             $("#join-error").text("Error: Invalid game code.");
-            alert("invalid");
+            $("#join-btn").removeAttr("disabled").text("Join Game");
         }
 
     });
@@ -111,8 +100,10 @@ function initHandlers() {
             }
 
             console.log(user.uid, user);
-            let game = Game.createGame(name, user);
+            let game = await Game.createGame(name, user);
             console.log(user, game);
+            localStorage.setItem("currentGameID", game.id);
+            window.location.href = "/game.html#" + game.id;
         })
     });
 

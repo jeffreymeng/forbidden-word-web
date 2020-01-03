@@ -7,7 +7,8 @@ $fonts: (
 $colors: (
     bg: #273361,
     main: #FFD866,
-    button: #42AD86
+    button: #42AD86,
+	danger: #dc3545
 );
 
 @function color($color-name) {
@@ -104,7 +105,9 @@ main {
 #play {
 	height: 100%;
 }
-
+.error {
+	color: color(danger);
+}
 footer {
 	height: 10%;
 	justify-items: center;
@@ -124,12 +127,16 @@ footer {
 		grid-column-end: 2;
 	}
 
-	#game-mode {
+	#game-leave {
 		grid-column-start: 2;
 		grid-column-end: 3;
+		color:color(danger);
+		background-color:transparent;
+		border:none;
+		cursor:pointer;
 	}
 
-	#user-name {
+	#username {
 		grid-column-start: 3;
 		grid-column-end: 4;
 	}

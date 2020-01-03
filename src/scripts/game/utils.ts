@@ -119,7 +119,8 @@ async function generateRandomId(minLength = 5, tries = 0): Promise<string> {
     }
 
     // Avoid 0 and O because they are ambiguous.
-    let chars = range("1-94A-NP-Z");
+    let chars = range("1-9A-NP-Z");
+    console.log(chars);
     let result = "";
     for (let i = minLength; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return firebase.firestore()

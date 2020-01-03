@@ -18,7 +18,11 @@ $colors: (
 @function font($font-name) {
     @return map-get($fonts, $font-name)
 }
-
+@mixin mobile {
+    @media (max-width: 799px) {
+        @content;
+    }
+}
 @mixin desktop {
     @media (min-width: 800px) {
         @content;
@@ -120,12 +124,21 @@ nav {
         background-color: color(button);
         color: white;
 
+        @include mobile {
+            &.selected {
+                background-color: color(main);
+            }
+        }
+
         @include desktop {
             width: 5em;
             text-align: left;
             background-color: color(bg);
             border: none;
             text-decoration: underline;
+            &.selected {
+                color:color(main);
+            }
         }
     }
 }
