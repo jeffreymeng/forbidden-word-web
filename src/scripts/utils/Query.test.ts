@@ -128,6 +128,10 @@ describe("Query.getString with string", () => {
     test("Don't get parameters in hash tag.", () => {
         expect(Query.getString("http://example.com?#q=helloworld")).toBe("?");
     });
+
+    test("Don't get parameters in hash tag even if no query string.", () => {
+        expect(Query.getString("http://example.com#q=helloworld")).toBe("");
+    });
 });
 
 describe("Query.getString without string", () => {
