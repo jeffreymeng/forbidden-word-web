@@ -2,7 +2,13 @@ import Query from "./Query";
 
 
 describe("Query.get without URL", () => {
+
     test("Decode Query", () => {
+        Object.defineProperty(window, 'location', {
+            value: {
+                href: "https://example.com/page.html?a=Query%20A&foo=hi"
+            }
+        });
         expect(Query.get("a"))
                 .toBe("Query A");
     });
@@ -60,9 +66,15 @@ describe("Query.get with URL", () => {
 
 describe("Query.getAll without string", () => {
     test("Decode Query", () => {
+        Object.defineProperty(window, 'location', {
+            value: {
+                href: "https://example.com/page.html?a=Query%20A&foo=hi"
+            }
+        });
         expect(Query.getAll())
                 .toEqual({
                     a: "Query A",
+                    foo: "hi"
                 });
     });
 });
@@ -119,7 +131,14 @@ describe("Query.getString with string", () => {
 });
 
 describe("Query.getString without string", () => {
+
     test("Decode Query", () => {
+        Object.defineProperty(window, 'location', {
+            value: {
+                href: "https://example.com/page.html?a=Query%20A"
+            }
+        });
+
         expect(Query.getString()).toBe("?a=Query%20A");
     });
 });
