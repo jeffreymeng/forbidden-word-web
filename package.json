@@ -2,9 +2,9 @@
   "name": "forbidden-word",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.html",
   "scripts": {
-    "dev": "parcel src/index.html src/game.html src/404.html --public-url /",
+    "dev": "node run-parcel-dev.js",
     "docs": "typedoc --exclude node_modules --exclude ./src/scripts/game/**.test.ts --ignoreCompilerErrors --out docs --target ES5 ./src/scripts/game/**",
     "test": "jest",
     "build": "parcel build src/index.html src/game.html src/404.html"
