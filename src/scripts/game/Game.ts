@@ -2,6 +2,7 @@ import firebase from "./firebase";
 
 import { generateRandomId } from "./utils";
 import { User }  from "firebase";
+import { Event, PlayerEvent } from "./Event";
 
 interface Player {
     id?: string;
@@ -15,6 +16,7 @@ interface GameData {
     status: GameStatus;
     timestamp: number;
 }
+
 enum GameStatus {
     HOST_DISCONNECT = -1,
     WAITING_FOR_PLAYERS = 1,
@@ -30,15 +32,7 @@ enum PlayerStatus {
     IN_PROGRESS = "IN_PROGRESS"
 }
 
-class Event {
-    name: string;
-    data: any;
-
-    constructor(name?: string, data?: any) {
-        this.name = name;
-        this.data = data;
-    }
-}
+type EventName = "player-join" | "player-modify" | "player-leave" | "initialized";
 
 /**
  * A Game is a representation of a forbidden word Game.
@@ -53,9 +47,10 @@ class Game {
     public readonly id: string;
 
     /**
-     * The username of the current player.
+     * The username of the current player. This is an internal value. To get/set the username, edit the field `username` instead.
+     * @internal
      */
-    public readonly username: string;
+    protected _username: string;
 
     /**
      * Whether the current user is the host.
@@ -75,7 +70,7 @@ class Game {
     /**
      * List of event handlers.
      */
-            // Supported events (WIP): user-join user-leave initialized
+            // Supported events (WIP): player-join player-modify player-leave initialized
     eventListeners: object = {};
 
     /**
@@ -89,7 +84,7 @@ class Game {
     constructor(id: string, user: User, name:string, isHost: boolean = false, initialized = false) {
         this.id = id;
         this.user = user;
-        this.username = name;
+        this._username = name;
         this.isHost = isHost;
         this.initialized = initialized || isHost;
         this.initializeListeners();
@@ -99,13 +94,40 @@ class Game {
     }
 
     /**
+     * Get the username.
+     */
+    get username(): string {
+        return this._username;
+    }
+
+
+    /**
+     * Update the username on the server.
+     * @param newUsername
+     */
+    async updateUsername(newUsername: string) {
+        this._username = newUsername;
+        return firebase.firestore()
+                .collection("games")
+                .doc(this.id)
+                .collection("players")
+                .doc(this.user.uid)
+                .update({
+                    name:newUsername,
+                }).catch((error) => {
+                    console.log(error);
+                    throw error;
+                });
+    }
+
+    /**
      * Add a game event listener.
      * @param eventNames - The name(s) of the events to attach the listener to.
      * @param callback - The function to call when the event is called.
      */
-    on(eventNames: string|string[], callback:((e?: Event) => void)) {
+    on(eventNames: EventName|EventName[], callback:((e?: Event) => void)) {
         if (typeof eventNames == "string") {
-            eventNames = eventNames.split(" ");
+            eventNames = <EventName[]>eventNames.split(" ");
         }
         for (let i = 0; i < eventNames.length; i ++) {
             if (!this.eventListeners[eventNames[i]]) {
@@ -120,9 +142,9 @@ class Game {
      * @param eventNames - The name(s) of the events from which to remove the listener
      * @param callback - The specific callback to remove. If not provided, all callbacks will be removed.
      */
-    off(eventNames: string|string[], callback?:((e?: Event) => void)) {
+    off(eventNames: EventName|EventName[], callback?:((e?: Event) => void)) {
         if (typeof eventNames == "string") {
-            eventNames = eventNames.split(" ");
+            eventNames = [eventNames];
         }
         for (let i = 0; i < eventNames.length; i ++) {
             if (!callback) {
@@ -144,7 +166,8 @@ class Game {
      */
     join() {
         if (this.initialized) {
-            console.warn("Warning: The game has already been initialized. Cannot re-join a game.");
+            console.warn("Warning: The game has already been initialized. Will not re-join a game.");
+            return;
         }
 
         let id = this.id;
@@ -155,7 +178,8 @@ class Game {
                 .doc(this.user.uid)
                 .set({
                     name:this.username,
-                    isHost:this.isHost
+                    isHost:this.isHost,
+                    status:PlayerStatus.READY
                 }).then(() => {
                     this.initialized = true;
                     this.trigger("initialized");
@@ -168,10 +192,20 @@ class Game {
 
     }
 
-    trigger(eventName: string, eventData?: any) {
-        let e = new Event(eventName, eventData);
+    /**
+     * Trigger an event. All active listeners of that event will be called.
+     * @param eventName - The name of the event to trigger.
+     * @param event - An Event payload to pass to the listeners. It should accept a single parameter event, which may be an Event or undefined.
+     */
+    trigger(eventName: EventName, event?: Event) {
+        if (event && !event.name) {
+            event.name = eventName;
+        }
+        if (!this.eventListeners[eventName]) {
+            this.eventListeners[eventName] = [];
+        }
         for (let i = 0; i < this.eventListeners[eventName].length; i ++) {
-            this.eventListeners[eventName][i](e);
+            this.eventListeners[eventName][i](event);
         }
     }
 
@@ -187,23 +221,17 @@ class Game {
         gameRef.collection("players")
                 .onSnapshot((snapshot) => {
                     snapshot.docChanges().forEach((change) => {
+                        let player = <Player>change.doc.data();
+                        player.id = change.doc.id;
+
                         if (change.type === "added") {
-                            this.trigger("user-join", {
-                                userData:change.doc.data(),
-                                userId:change.doc.id
-                            });
+                            this.trigger("player-join", new PlayerEvent.PlayerJoinEvent(player));
                         }
                         if (change.type === "modified") {
-                            console.log("Modified player: ", {
-                                userData:change.doc.data(),
-                                userId:change.doc.id
-                            });
+                            this.trigger("player-modify", new PlayerEvent.PlayerModifyEvent(player));
                         }
                         if (change.type === "removed") {
-                            this.trigger("user-leave", {
-                                userData:change.doc.data(),
-                                userId:change.doc.id
-                            });
+                            this.trigger("player-leave", new PlayerEvent.PlayerLeaveEvent(player));
                         }
                     });
                 });
@@ -228,6 +256,22 @@ class Game {
                 .doc(this.id)
                 .collection("players")
                 .doc(this.user.uid)
+                .delete();
+    }
+
+    /**
+     * Remove a user. Because the user may still rejoin, this is intended for kicking idle users, not malicious ones.
+     * If an unwanted user joins, the host is recommended to start a new game.
+     */
+    async kick(id: string) {
+        if (!this.isHost) {
+            throw "PermissionError: Only the host can kick players";
+        }
+        return firebase.firestore()
+                .collection("games")
+                .doc(this.id)
+                .collection("players")
+                .doc(id)
                 .delete();
     }
 

@@ -125,24 +125,32 @@ footer {
 	#game-code {
 		grid-column-start: 1;
 		grid-column-end: 2;
+		cursor:pointer;
 	}
 
 	#game-leave {
 		grid-column-start: 2;
 		grid-column-end: 3;
 		color:color(danger);
-		background-color:transparent;
-		border:none;
+		//background-color:transparent;
+		//border:none;
 		cursor:pointer;
 	}
 
 	#username {
 		grid-column-start: 3;
 		grid-column-end: 4;
+		cursor:pointer;
 	}
 }
 
+.userlist-player {
+	// Userlist player name
+}
 
+.userlist-current-user {
+	color: yellowgreen;
+}
 
 
 

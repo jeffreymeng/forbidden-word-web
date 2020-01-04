@@ -1,6 +1,6 @@
 import { dom, library } from '@fortawesome/fontawesome-svg-core';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import '../styles/index.scss';
 import $ from "jquery";
 import Game from './game/Game';
