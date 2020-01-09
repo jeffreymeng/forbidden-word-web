@@ -4,7 +4,7 @@ import { dom, library } from '@fortawesome/fontawesome-svg-core';
 import { faCrown, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { Game, GameData, GameStatus, Player, PlayerStatus} from './game/Game';
-import { PlayerEvent } from "./game/Event";
+import Event  from "./game/Event";
 import { firebase, login } from "./game/firebase";
 import { Query } from "./utils/Query";
 import { User } from "firebase";
@@ -12,9 +12,6 @@ import { User } from "firebase";
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import ClipboardJS from "clipboard";
-
-import PlayerJoinEvent = PlayerEvent.PlayerJoinEvent;
-import PlayerLeaveEvent = PlayerEvent.PlayerLeaveEvent;
 
 
 /*
@@ -184,7 +181,7 @@ function processGameJoin(game: Game, user: User) {
         $("body").on("click", ".remove-player", function() {
             confirm("Remove " + $(this).attr("data-userName") + $(this).attr("data-userId") + "?");
         });
-        game.on("player-join", function(e: PlayerJoinEvent) {
+        game.on("player-join", function(e: Event.Player.Join) {
             console.log("User joined", e);
             // order it so that the current user is always first, and the host is always next (unless they are the same)
             if (e.data.id === game.user.uid) {
@@ -201,13 +198,13 @@ function processGameJoin(game: Game, user: User) {
 
         });
 
-        game.on("player-modify", function(e: PlayerJoinEvent) {
+        game.on("player-modify", function(e: Event.Player.Modify) {
             console.log("user modified", e);
             console.log(getUserlistUserElement(e.data, game));
             $("#userList-user" + e.data.id).replaceWith(getUserlistUserElement(e.data, game));
         });
 
-        game.on("player-leave", function(e: PlayerLeaveEvent) {
+        game.on("player-leave", function(e: Event.Player.Leave) {
             if (e.data.isHost) {
                 alert("Host Left. You should leave");
             } else if (e.data.id == user.uid) {

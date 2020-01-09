@@ -2,7 +2,7 @@ import firebase from "./firebase";
 
 import { generateRandomId } from "./utils";
 import { User }  from "firebase";
-import { Event, PlayerEvent } from "./Event";
+import { Event } from "./Event";
 
 interface Player {
     id?: string;
@@ -125,7 +125,7 @@ class Game {
      * @param eventNames - The name(s) of the events to attach the listener to.
      * @param callback - The function to call when the event is called.
      */
-    on(eventNames: EventName|EventName[], callback:((e?: Event) => void)) {
+    on(eventNames: EventName|EventName[], callback:((e?: Event.Any) => void)) {
         if (typeof eventNames == "string") {
             eventNames = <EventName[]>eventNames.split(" ");
         }
@@ -197,7 +197,7 @@ class Game {
      * @param eventName - The name of the event to trigger.
      * @param event - An Event payload to pass to the listeners. It should accept a single parameter event, which may be an Event or undefined.
      */
-    trigger(eventName: EventName, event?: Event) {
+    trigger(eventName: EventName, event?: Event.Any) {
         if (event && !event.name) {
             event.name = eventName;
         }
@@ -225,13 +225,13 @@ class Game {
                         player.id = change.doc.id;
 
                         if (change.type === "added") {
-                            this.trigger("player-join", new PlayerEvent.PlayerJoinEvent(player));
+                            this.trigger("player-join", new Event.Player.Join(player));
                         }
                         if (change.type === "modified") {
-                            this.trigger("player-modify", new PlayerEvent.PlayerModifyEvent(player));
+                            this.trigger("player-modify", new Event.Player.Modify(player));
                         }
                         if (change.type === "removed") {
-                            this.trigger("player-leave", new PlayerEvent.PlayerLeaveEvent(player));
+                            this.trigger("player-leave", new Event.Player.Leave(player));
                         }
                     });
                 });
