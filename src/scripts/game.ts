@@ -12,7 +12,8 @@ import { User } from "firebase";
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import ClipboardJS from "clipboard";
-
+import MicroModal from 'micromodal';
+import '../styles/micromodal.scss';
 
 /*
 TODO:
@@ -26,6 +27,10 @@ TODO:
     is not actually reloaded, but the address bar URL is edited.
  */
 async function init() {
+    MicroModal.init({
+        awaitCloseAnimation: true
+    });
+
     initFonts();
     let id = (window.location.pathname.split("/").length >= 3 ? window.location.pathname.split("/")[2] : false) || window.location.hash.substring(1);
     console.log(id, window.location.pathname.split("/"), window.location.hash);
@@ -35,7 +40,7 @@ async function init() {
     }
     if (!valid) {
         alert("Invalid game ID");
-        window.location.href = "/index.html";
+        window.location.href = "/index.html?error=100";
     }
     let user = await login();
     await connect(user, id);
@@ -43,28 +48,50 @@ async function init() {
 }
 async function initHandlers(game: Game) {
     $("#game-leave").on("click", async () => {
-        if(confirm("Are you sure you want to leave?")) {
-            game.off("player-leave");
-            await game.leave();
-            // $(window).off("beforeunload", beforeUnloadHandler);
-            window.location.href = "/index.html";
-            return;
+        if (game.isHost) {
+            $("#leave-confirm-host-info").removeClass("hidden");
         }
+        console.log(MicroModal);
+        MicroModal.init({
+            awaitCloseAnimation: true
+        });
+        MicroModal.show("leave-confirm-modal");
+
     });
+
+    $("#leave-confirm-btn").click(async () => {
+
+        game.off("player-leave");
+        await game.leave();
+        MicroModal.close("leave-confirm-modal");
+        // $(window).off("beforeunload", beforeUnloadHandler);
+        window.location.href = "/";
+        return;
+
+    });
+
+    initKick(game);
+}
+function initKick(game: Game) {
+    let toKick;
 
     if (game.isHost) {
         $(document).on("click", ".remove-user", function() {
             let id = $(this).attr("data-player-id");
             console.log("remove", id);
-            if (confirm("Kick " + $(this).attr("data-player-name") + "?")) {
-                game.kick(id);
-            }
+            $(".remove-user-confirm-name").text($(this).attr("data-player-name"));
+            toKick = id;
+            MicroModal.show("remove-user-confirm-modal");
+
         });
+
     }
-    // $(window).on("beforeunload", beforeUnloadHandler);
-    // function beforeUnloadHandler() {
-    //     return 'You have unsaved changes!';
-    // }
+    $(document).on("click", "#remove-user-confirm-btn", () => {
+        game.kick(toKick);
+
+        // Using the data attribute can work in unintended ways on mobile
+        MicroModal.close("remove-user-confirm-modal");
+    });
 }
 async function connect(user: User, id: string) {
 
@@ -72,7 +99,7 @@ async function connect(user: User, id: string) {
             .collection("games")
             .doc(id);
     let gameData: firebase.firestore.DocumentSnapshot | GameData = await gameRef
-            .get()
+            .get();
     if (gameData.exists) {
         gameData = <GameData>gameData.data();
     } else {
@@ -209,8 +236,18 @@ function processGameJoin(game: Game, user: User) {
                 alert("Host Left. You should leave");
             } else if (e.data.id == user.uid) {
                 // The current player was kicked
-
-                window.location.href = window.location.pathname + Query.set("ref", "host_disconnect", Query.set("username", e.data.name)) + window.location.hash;
+                console.log(e.data.id, user.uid);
+                // Window.location.href doesn't always reload the page, because there is a hash.
+                let newUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "") + window.location.pathname + Query.set("ref", "host_disconnect", Query.set("username", e.data.name)) + window.location.hash;
+                console.log(window.location.href != newUrl, newUrl);
+                if (window.location.href != newUrl) {
+                    console.log("change");
+                    window.location.href = newUrl;
+                } else {
+                    console.log("reload");
+                    window.location.reload();
+                }
+                return;
             }
             console.log("User left", e);
             $("#userList-user" + e.data.id).remove();
@@ -222,9 +259,8 @@ init();
 
 /**
  * Generate an li for the user list from a username. This method can safely be used with user inputted usernames.
- * @param userId - The ID of the user.
- * @param username - The username of the user. The username will be sanitized before it is added to the element.
- * @param isHost - Whether or not the user is a host.
+ * @param player - The player to generate the li for.
+ * @param game - The game.
  */
 function getUserlistUserElement(player: Player, game: Game): HTMLElement {
     let userLi = document.createElement("li");

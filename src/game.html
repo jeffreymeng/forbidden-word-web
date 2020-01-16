@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title></title>
 	<link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Text|EB+Garamond|Poppins&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
 </head>
 <body>
@@ -63,11 +65,89 @@
         </section>
     </main>
 
-    <footer>
+    <footer id="main-footer">
         <button class="footer hidden" id="game-code"></button>
 		<button class="footer hidden" id="game-leave">Leave</button>
 		<button class="footer hidden" id="username"></button>
     </footer>
 	<script src="scripts/game.ts"></script>
+
+	<!-- Modals -->
+	<div class="modal micromodal-slide" id="remove-user-confirm-modal" aria-hidden="true">
+		<div class="modal__overlay" tabindex="-1" data-micromodal-close>
+			<div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+				<header class="modal__header">
+					<h2 class="modal__title" id="remove-user-confirm-title">
+						Remove <i class="remove-user-confirm-name">Player</i>?
+					</h2>
+					<button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+				</header>
+				<div class="modal__content" id="remove-user-confirm-content">
+					<p>
+						Are you sure you would like to remove <i class="remove-user-confirm-name">this player</i> from the game?
+					</p>
+					<p>
+						<i>Note: This feature is intended for disconnecting idle players. If an unintended player has joined, they will
+							still be able to rejoin after they are disconnected, so it is recommended that you create a new game to remove
+							unintended players rather than disconnecting them.</i>
+					</p>
+				</div>
+				<footer class="modal__footer">
+					<button class="modal__btn modal__btn-danger" id="remove-user-confirm-btn">Remove User</button>
+					<button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Cancel</button>
+				</footer>
+			</div>
+		</div>
+	</div>
+	<div class="modal micromodal-slide" id="leave-confirm-modal" aria-hidden="true">
+		<div class="modal__overlay" tabindex="-1" data-micromodal-close>
+			<div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+				<header class="modal__header">
+					<h2 class="modal__title" id="leave-confirm-title">
+						Leave Game?
+					</h2>
+					<button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+				</header>
+				<div class="modal__content" id="leave-confirm-content">
+					<p>
+						Are you sure you would like to leave the game?
+					</p>
+					<div id="leave-confirm-host-info" class="hidden">
+						<p>Because you are the host of this game, you may choose a replacement host below.
+							If you do not choose one, a replacement host will be randomly assigned.</p>
+						<b>
+							Select a replacement user:
+						</b>
+						<ul>
+							<li>
+								<input type="radio" id="f-option" name="selector">
+								<label for="f-option">Pizza</label>
+
+								<div class="check"></div>
+							</li>
+
+							<li>
+								<input type="radio" id="s-option" name="selector">
+								<label for="s-option">Bacon</label>
+
+								<div class="check"><div class="inside"></div></div>
+							</li>
+
+							<li>
+								<input type="radio" id="t-option" name="selector">
+								<label for="t-option">Cats</label>
+
+								<div class="check"><div class="inside"></div></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<footer class="modal__footer">
+					<button class="modal__btn modal__btn-danger" id="leave-confirm-btn">Leave</button>
+					<button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Cancel</button>
+				</footer>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -14,35 +14,26 @@ initHandlers();
 
 
 function initHandlers() {
-    $("#home-host").click(() => {
+    // Right now, and when the hash changes, change the page
+    $(window).on("hashchange", function() {
+        let page = window.location.hash.substring(1);
+        if (["host", "rules"].indexOf(page) < 0) {
+            page = "join";
+        }
         $(".view").addClass("hidden");
-        $("#view-host").removeClass("hidden");
-        $(".selected")
-                .removeClass("selected");
-        $("#home-host")
-                .addClass("selected");
-        $("#host-name").focus();
-    });
+        $(".selected").removeClass("selected");
+        let elementToFocusMap = {
+            host:"#host-name",
+            join:"#join-code",
+            rules:false
+        };
+        $(`#view-${page}`).removeClass("hidden");
+        $(`#home-${page}`).addClass("selected");
+        if (elementToFocusMap[page]) {
+            $(elementToFocusMap[page]).focus();
+        }
+    }).trigger("hashchange");
 
-    $("#home-join").click(() => {
-
-        $(".view").addClass("hidden");
-        $("#view-join").removeClass("hidden");
-        $(".selected")
-                .removeClass("selected");
-        $("#home-join")
-                .addClass("selected");
-        $("#join-code").focus();
-    });
-
-    $("#home-rules").click(() => {
-        $(".view").addClass("hidden");
-        $("#view-rules").removeClass("hidden");
-        $(".selected")
-                .removeClass("selected");
-        $("#home-rules")
-                .addClass("selected");
-    });
 
     $("#join-btn").click(async function() {
 
@@ -102,7 +93,6 @@ function initHandlers() {
             console.log(user.uid, user);
             let game = await Game.createGame(name, user);
             console.log(user, game);
-            localStorage.setItem("currentGameID", game.id);
             window.location.href = "/game.html#" + game.id;
         })
     });

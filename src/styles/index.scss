@@ -111,7 +111,7 @@ nav {
         align-items: flex-start;
     }
 
-    button {
+    .press {
         margin: 5px !important; 
         height: 5vh;
         border-radius: 2vh;
@@ -229,9 +229,25 @@ nav {
     }
 }
 
+#icon {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 1.5rem;
+    .icon-btn,
+    .icon-btn:visited {
+        opacity: 0.85;
+        transition: 0.3s;
+        color: color(bg);
+        &:hover {
+            opacity: 1
+        }
+        &:active {
+            color: color(main);
+        }
+    }
 
-
-
+}
 
 
 
