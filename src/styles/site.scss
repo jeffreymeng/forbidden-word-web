@@ -1,0 +1,22 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+html, body {
+  height: 100vh;
+  margin: 0;
+}
+
+// Sticky Footer
+#site-container {
+  min-height: 100vh;
+
+  /* Equal to height of footer */
+  /* But also accounting for potential margin-bottom of last child */
+  margin-bottom: -120px;
+}
+footer,
+.push {
+  height: 120px;
+}
+footer {
+  padding-top:10px;
+}
