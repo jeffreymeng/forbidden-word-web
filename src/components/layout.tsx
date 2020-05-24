@@ -2,9 +2,10 @@ import React, { ReactElement } from "react";
 
 import { Container } from "react-bootstrap";
 
-const Layout = ({ children, noTitle }: {
+const Layout = ({ children, noTitle, showSubtitle }: {
   children: React.ReactNode;
-  noTitle: boolean;
+  noTitle?: boolean;
+  showSubtitle?: boolean;
 }): ReactElement => {
 
   return (
@@ -14,8 +15,8 @@ const Layout = ({ children, noTitle }: {
       }}>
         {(!noTitle) && <>
           <h1 className={"text-center"}>Forbidden Words</h1>
-          <p className="text-muted text-center">A game of ulterior motives and fake conversations.</p>
-          <hr/>
+          {showSubtitle && <><p className="text-muted text-center">A game of ulterior motives and fake conversations.</p><hr/></>}
+
         </>}
         {children}
         <div className="push"/>

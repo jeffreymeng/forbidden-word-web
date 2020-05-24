@@ -25,7 +25,6 @@ async function generateRandomId(minLength: number): Promise<string>;
 async function generateRandomId(tries: number, minLength: number): Promise<string>;
 
 async function generateRandomId(minLength = 5, tries = 0): Promise<string> {
-  console.log(tries, minLength);
   if (tries % 75 == 0 && tries != 0) {
     minLength ++;
   }
@@ -35,7 +34,6 @@ async function generateRandomId(minLength = 5, tries = 0): Promise<string> {
 
   // Use only capital letters to prevent ambiguity
   const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  console.log(chars);
   let result = "";
   for (let i = minLength; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return firebase.firestore()

@@ -8,17 +8,17 @@ export default function IndexPage(): ReactElement {
   const [name, setName] = React.useState("");
   const [code, setCode] = React.useState("");
   return (
-    <Layout>
+    <Layout showSubtitle>
       <SEO title="Home"/>
 
       <Row className={"mt-3"}>
         <Col xs={12} md={6}>
-          <Button variant={"outline-primary mt-3"} block onClick={(): Promise<void> => navigate("/join")}>
+          <Button variant={"outline-primary"} block onClick={(): Promise<void> => navigate("/join")}>
             Join Game
           </Button>
         </Col>
         <Col xs={12} md={6}>
-          <Button variant={"outline-primary mt-3"} block onClick={(): Promise<void> => navigate("/create")}>
+          <Button variant={"outline-primary"} block onClick={(): Promise<void> => navigate("/create")}>
             Create Game
           </Button>
         </Col>

@@ -13,10 +13,25 @@ html, body {
   /* But also accounting for potential margin-bottom of last child */
   margin-bottom: -120px;
 }
+
 footer,
 .push {
   height: 120px;
 }
+
 footer {
-  padding-top:10px;
+  padding-top: 10px;
+}
+
+// Style ALL links, even without href (bootstrap doesnt do this by default)
+a:not([href]) {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: grab;
+}
+
+a:not([href]):hover {
+  color: #0056b3;
+  text-decoration: underline;
 }

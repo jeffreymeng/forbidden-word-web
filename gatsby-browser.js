@@ -4,11 +4,4 @@
  * See: https://www.gatsbyjs.org/docs/browser-apis/
  */
 
-import React from "react";
 import "./src/styles/site.scss";
-import GameProvider from "./src/context/GameContext";
-
-// eslint-disable-next-line react/prop-types
-export const wrapRootElement = ({ element }) => (
-  <GameProvider>{element}</GameProvider>
-);
