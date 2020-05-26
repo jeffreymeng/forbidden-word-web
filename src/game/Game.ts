@@ -6,7 +6,6 @@ import { generateRandomId } from "../utils/generateRandomId";
 
 interface GameData {
 	host: string;
-	players: PlayerData[];
 	created: firebase.firestore.Timestamp;
 }
 
@@ -15,6 +14,15 @@ enum GameStatus {
 	IN_LOBBY = "in_lobby",
 }
 
+class PlayerModification {
+	public readonly newValue: Player | null;
+	public readonly id: string;
+
+	constructor(id: string, newValue: Player | null) {
+		this.id = id;
+		this.newValue = newValue;
+	}
+}
 
 /**
  * A representation of a Game on the server.
@@ -27,7 +35,11 @@ class Game {
 	protected _isHost: boolean;
 	protected _players: Player[] = [];
 	protected _initialized = false;
-	private unsubscribeFunction: (null | (() => void)) = null;
+	protected _initializedStatus = {
+		data:false,
+		players:false
+	}
+	private unsubscribeFunctions: (() => void)[] = [];
 	protected _connected = false;
 	private listeners: Partial<{
 		player_modified: ((e: Event.PlayerModifiedEvent) => void)[];
@@ -109,14 +121,27 @@ class Game {
 	 * Connect to the server.
 	 */
 	public connect(): void {
-		this.unsubscribeFunction = firebase
+		this.unsubscribeFunctions.push(firebase
 			.firestore()
 			.collection("games")
 			.doc(this.code)
-			.onSnapshot((snapshot: firebase.firestore.DocumentSnapshot<GameData>) => {
-				this.setData(snapshot.data());
-				console.log(snapshot.data());
-			});
+			.onSnapshot(
+				{ includeMetadataChanges: true },
+				(snapshot: firebase.firestore.DocumentSnapshot<GameData>) => {
+					if (snapshot.metadata.hasPendingWrites) return;
+					this.updateData(snapshot.data());
+				}));
+		this.unsubscribeFunctions.push(firebase
+			.firestore()
+			.collection("games")
+			.doc(this.code)
+			.collection("players")
+			.onSnapshot(
+				{ includeMetadataChanges: true },
+				(snapshot: firebase.firestore.QuerySnapshot<PlayerData>) => {
+					if (snapshot.docs.some(s => s.metadata.hasPendingWrites)) return;
+					this.updatePlayers(snapshot.docs.map(s => s.data()));
+				}));
 		this._connected = true;
 	}
 
@@ -127,27 +152,51 @@ class Game {
 		if (!this.connected) {
 			throw new Error("Cannot disconnect a game that was not previously connected. Check gameInstance.connected before disconnecting.");
 		}
-		this.unsubscribeFunction();
+		this.unsubscribeFunctions.forEach(fn => fn());
+		this.unsubscribeFunctions = [];
 		this._connected = false;
 
 	}
 
-	protected setData(data: GameData): void {
+	protected updateData(data: GameData): void {
 		this._host = data.host;
 		this._isHost = data.host == this.uid;
-		const newPlayers = data.players.map(p => new Player(p.name, p.id, p.status, p.id == data.host, p.id == this.uid));
-		console.log("SETTING PLAYERS", newPlayers, newPlayers[0].status);
-		this._players = newPlayers;
-		console.log("SET PLAYERS", this.players, this.hasPlayerID(newPlayers[0].id));
-		if (!Player.equalArrays(newPlayers, this._players)) {
-			this.fireEvent("player_modified", new Event.PlayerModifiedEvent(newPlayers, this._players));
+		this._initializedStatus = {
+			...this._initializedStatus,
+			data:true
+		};
+		this.fireInitialized();
+
+	}
+
+	/**
+	 * Updates the internal players array with the given modification, and fires the appropriate events.
+	 * @param data - An array of PlayerData. This should not be the same as the old value.
+	 */
+	protected updatePlayers(data: PlayerData[]): void {
+
+		const oldPlayers = this._players;
+		this._players = data.map(p => new Player(p.name, p.id, p.status, p.id == this.host, p.id == this.uid));
+		if (Player.equalArrays(oldPlayers, this.players)) {
+			console.warn("Equal arrays were passed to updatePlayers(). No events were fired.");
+			return;
 		}
-		if (newPlayers.filter(p => p.id == this._uid).length > 0 && newPlayers.filter(p => p.id == this._uid)[0].status == PlayerStatus.KICKED) {
+		this._initializedStatus = {
+			...this._initializedStatus,
+			players:true
+		};
+		this.fireInitialized();
+		this.fireEvent("player_modified", new Event.PlayerModifiedEvent(this.players, oldPlayers));
+		if (this.players.find(p => p.id == this._uid)?.status == PlayerStatus.KICKED) {
 			this.fireEvent("kicked", new Event.KickedEvent());
 		}
+	}
 
-
-		if (!this.initialized) {
+	/**
+	 * Fires the initialized event if all data has been initialized and the game has not yet been initialized.
+	 */
+	protected fireInitialized():void {
+		if (!this.initialized && this._initializedStatus.data && this._initializedStatus.players) {
 			this.fireEvent("initialized", new Event.InitializedEvent());
 			this._initialized = true;
 		}
@@ -170,61 +219,49 @@ class Game {
 	 * @param player
 	 */
 	public async add(player: Player): Promise<void> {
-		// TODO: check if they are allowed to join the game based on status
 		if (this.hasName(player.name)) {
 			return Promise.reject({
 				code: "username_taken",
 				message: "The player's username has already been taken. Spaces are not considered when comparing usernames.",
 			});
 		}
+		if (!this.connected || !this.initialized) {
+			return Promise.reject({
+				code: "not_connected",
+				message: "The game must be initialized and connected to the server to add a player.",
+			});
+		}
+		// TODO: check game.status
 		await firebase
 			.firestore()
 			.collection("games")
 			.doc(this.code)
-			.update({
-				players: firebase.firestore.FieldValue.arrayUnion(player.toJSON()),
-			});
+			.collection("players")
+			.doc(player.id)
+			.set(player.toJSON());
 	}
 
 	/**
 	 * Kick a player. Intended for inactive players, so they may still rejoin.
-	 * Must be host.
-	 * @param player
+	 * Must be host to kick.
+	 * @param playerID - the ID of the player to kick
 	 */
 	public async kick(playerID: string): Promise<void> {
 		if (!this.isHost) {
-			throw new Error("You may not kick a user unless you are the host.");
+			throw new Error("You may not kick a player unless you are the host.");
 		}
 		if (this.uid == playerID) {
-			throw new Error("You can not kick yourself. Use game.leave instead.");
+			throw new Error("You can not kick yourself. Use .leave() instead.");
 		}
-
-		const ref = firebase.firestore().collection("games").doc(this.code);
-		return firebase.firestore().runTransaction(function(transaction) {
-			// This code may get re-run multiple times if there are conflicts.
-			return transaction.get(ref).then(function(snapshot) {
-				if (!snapshot.exists) {
-					throw new Error("The game could not be found.");
-				}
-				let didKick = false;
-				console.log(playerID, snapshot.data());
-				const newPlayers = snapshot.data().players.map((p: PlayerData) => {
-					console.log(p);
-					if (p.id == playerID) {
-						didKick = true;
-						return {
-							...p,
-							status: PlayerStatus.KICKED,
-						};
-					}
-					return p;
-				});
-				if (!didKick) {
-					throw new Error("The player to be kicked could not be found.");
-				}
-				transaction.update(ref, { players: newPlayers });
+		return firebase.firestore()
+			.collection("games")
+			.doc(this.code)
+			.collection("players")
+			.doc(playerID)
+			.update({
+				status: PlayerStatus.KICKED,
 			});
-		});
+
 	}
 
 	/**
@@ -235,12 +272,12 @@ class Game {
 		console.log("HPID", this.players.filter(p => {
 			console.log(p, p.id == id && p.status == PlayerStatus.ACTIVE);
 			return p.id == id && p.status == PlayerStatus.ACTIVE;
-		}))
-		return this.players.filter(p => p.id == id && p.status == PlayerStatus.ACTIVE).length != 0;
+		}));
+		return this.players.some(p => p.id == id && p.status == PlayerStatus.ACTIVE);
 	}
 
 	public hasName(name: string): boolean {
-		return this._players.filter(p => p.status == PlayerStatus.ACTIVE && p.name.replace(/ /g, "") == name.replace(/ /g, "")).length > 0;
+		return this._players.some(p => p.status == PlayerStatus.ACTIVE && p.name.replace(/ /g, "") == name.replace(/ /g, ""));
 	}
 
 	/**
@@ -294,7 +331,6 @@ class Game {
 				status: "in_lobby",
 				rematch: false,
 				created: firebase.firestore.FieldValue.serverTimestamp(),
-				players: [new Player(name, uid, PlayerStatus.ACTIVE).toJSON()],
 			});
 		await firebase
 			.firestore()
@@ -302,10 +338,7 @@ class Game {
 			.doc(code)
 			.collection("players")
 			.doc(uid)
-			.set({
-				name: name,
-				isHost: true,
-			});
+			.set(new Player(name, uid, PlayerStatus.ACTIVE).toJSON());
 
 		return new Game(code, uid);
 	}

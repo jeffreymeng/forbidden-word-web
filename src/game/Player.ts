@@ -1,4 +1,4 @@
-enum PlayerStatus {
++enum PlayerStatus {
 	KICKED = "kicked",
 	LEFT = "left",
 	ACTIVE = "active",
@@ -14,14 +14,14 @@ class Player {
 	public name: string;
 	public readonly id: string;
 	public status: PlayerStatus;
-	public host: boolean;
+	public isHost: boolean;
 	public readonly isLocalPlayer: boolean;
 
 	constructor(name: string, id: string, status: PlayerStatus, host = false, isLocalPlayer = false) {
 		this.name = name;
 		this.id = id;
 		this.status = status;
-		this.host = host;
+		this.isHost = host;
 		this.isLocalPlayer = isLocalPlayer;
 	}
 
