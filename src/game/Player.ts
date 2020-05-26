@@ -1,4 +1,4 @@
-+enum PlayerStatus {
+enum PlayerStatus {
 	KICKED = "kicked",
 	LEFT = "left",
 	ACTIVE = "active",
