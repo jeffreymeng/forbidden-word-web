@@ -9,6 +9,8 @@ import Game from "../game/Game";
 import firebase from "../firebase";
 import validateName from "../utils/validateName";
 import { Link } from "gatsby";
+import { navigate } from "@reach/router";
+import NotFoundPage from "./404";
 
 function Share({ code }: { code: string }): ReactElement {
 	const [error, setError] = React.useState(false);
@@ -18,9 +20,12 @@ function Share({ code }: { code: string }): ReactElement {
 	const link = `https://forbiddenwords.jeffkmeng.com/game/${code}`;
 
 	return (<>
-		<p>{typeof window !== "undefined" && navigator.share ? <>
+		{/*
+		// @ts-ignore*/}
+		<p>{typeof window !== "undefined" && typeof navigator.share !== "undefined" ? <>
 			<a onClick={(): void => {
 				// alert("SHARE")
+				// @ts-ignore
 				navigator.share({
 					title: "Forbidden Words Game " + code,
 					text: "Join my forbidden words game! Code: " + code,
@@ -54,9 +59,7 @@ function Share({ code }: { code: string }): ReactElement {
 					wordBreak: "break-all",
 				}}>{link}</p>
 				<p>Tip: Most phones allow you to open a QR code link by opening the camera app and pointing the camera
-					at the
-					QR
-					code.</p>
+					at the QR code.</p>
 			</Modal.Body>
 			<Modal.Footer>
 				<Button variant="secondary" onClick={handleClose}>
@@ -75,7 +78,7 @@ function Lobby({ players, code, isHost, onKick }: { players: Player[]; code: str
 		id: "",
 	});
 	const [kicking, updateKicking] = React.useReducer((state: string[], action: { type: "add"; id: string } | { type: "remove"; id: string; }) => {
-		console.log(state, action, state.filter(k => k !== action.id))
+		console.log(state, action, state.filter(k => k !== action.id));
 		if (action.type == "add") {
 			return [...state, action.id];
 		} else {
@@ -109,7 +112,8 @@ function Lobby({ players, code, isHost, onKick }: { players: Player[]; code: str
 							setShowKickModal(true);
 						}}>Kick</a>})</>}</li>)}
 			</ul>
-			{isHost && <Button block>Start Game</Button>}
+			{isHost && <Button block
+							   disabled={sortedPlayers.length < 2}>{sortedPlayers.length < 2 ? "At least 1 more player required to start game" : "Start Game"}</Button>}
 			<Modal show={showKickModal} onHide={(): void => {
 				setShowKickModal(false);
 			}}>
@@ -134,7 +138,7 @@ function Lobby({ players, code, isHost, onKick }: { players: Player[]; code: str
 						updateKicking({ type: "add", id });
 						onKick(id)
 							.then(() => updateKicking({ type: "remove", id }))
-							.catch(() => updateKicking({ type: "remove", id }))
+							.catch(() => updateKicking({ type: "remove", id }));
 						setShowKickModal(false);
 					}}>
 						Kick {kickData.name}
@@ -159,6 +163,7 @@ function NamePrompt({ onSubmit, code, validate, kicked }: {
 			{kicked &&
 			<Alert variant={"danger"}>You&apos;ve been kicked by the host. You may still rejoin.</Alert>}
 			<InputForm
+				autoFocus
 				buttonText={"Join"}
 				label={"Your Name"}
 				onSubmit={(name, setError, setLoading): void => {
@@ -178,11 +183,13 @@ function NamePrompt({ onSubmit, code, validate, kicked }: {
 
 export default function GamePage(): ReactElement {
 	const code = typeof window === "undefined" ? "" : location.pathname.split("/").length >= 2 ? location.pathname.split("/")[2] : "";
+
 	const [game, setGame] = React.useState<Game>();
 	const [players, setPlayers] = React.useState<Player[]>([]);
 	const [uid, setUID] = React.useState("");
 	const [loading, setLoading] = React.useState(true);
 	const [kicked, setKicked] = React.useState(false);
+	const [gameNotFound, setGameNotFound] = React.useState(false);
 	// React.useEffect(() => {
 	// // TODO: figure out if this  is ideal
 	// 	window.addEventListener('beforeunload', function (e) {
@@ -195,8 +202,14 @@ export default function GamePage(): ReactElement {
 	React.useEffect(() => {
 		if (!code || !uid) return;
 		const gameInstance = new Game(code, uid);
+
 		setGame(gameInstance);
-		gameInstance.connect();
+		gameInstance.connect(() => {
+			setGameNotFound(true);
+			setLoading(false);
+			// no need to terminate the outer function early since no events will be fired anyways.
+		});
+
 		gameInstance.on("initialized", (): void => {
 			setPlayers(gameInstance.players.filter(p => p.status == PlayerStatus.ACTIVE));
 			setLoading(false);
@@ -222,6 +235,11 @@ export default function GamePage(): ReactElement {
 		});
 		return (): void => unsubscribe();
 	}, []);
+	if (code !== code.toUpperCase()) {
+		navigate("/game/" + code.toUpperCase(), {
+			replace: true,
+		});
+	}
 	if (loading) {
 		return (
 			<Layout>
@@ -230,6 +248,14 @@ export default function GamePage(): ReactElement {
 					<Spinner animation={"border"} as={"span"}/>
 				</p>
 			</Layout>);
+	}
+	if (gameNotFound) {
+		return <Layout>
+			<SEO title={"Game Not Found"}/>
+			<h3>404</h3>
+			<p>We couldn&apos;t find an active game at this location. Either you mistyped the link, or the game is now over.</p>
+			<p><Link to={"/join"}>Join a different game</Link> | <Link to={"/"}>Back to home page</Link></p>
+		</Layout>;
 	}
 	if (!game.hasPlayerID(uid)) {
 		// hasPlayerID only returns whether or not it has an active player

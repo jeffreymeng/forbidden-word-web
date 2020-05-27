@@ -1,11 +1,13 @@
 import React, { ReactElement } from "react";
 
 import { Container } from "react-bootstrap";
+import { Link } from "gatsby";
 
-const Layout = ({ children, noTitle, showSubtitle }: {
+const Layout = ({ children, noTitle, showSubtitle, linkHome}: {
   children: React.ReactNode;
   noTitle?: boolean;
   showSubtitle?: boolean;
+    linkHome?: boolean;
 }): ReactElement => {
 
   return (
@@ -14,7 +16,13 @@ const Layout = ({ children, noTitle, showSubtitle }: {
         maxWidth: 800
       }}>
         {(!noTitle) && <>
-          <h1 className={"text-center"}>Forbidden Words</h1>
+            {linkHome ? <Link style={{
+                cursor:"pointer",
+                color:"black",
+                textDecoration:"none",
+            }} to={"/"}><h1 className={"text-center"}>Forbidden Words</h1></Link> :
+                <h1 className={"text-center"}>Forbidden Words</h1>}
+
           {showSubtitle && <><p className="text-muted text-center">A game of ulterior motives and fake conversations.</p><hr/></>}
 
         </>}

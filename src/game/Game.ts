@@ -7,6 +7,7 @@ import { generateRandomId } from "../utils/generateRandomId";
 interface GameData {
 	host: string;
 	created: firebase.firestore.Timestamp;
+	status: GameStatus;
 }
 
 
@@ -29,16 +30,18 @@ class PlayerModification {
  */
 class Game {
 
+
 	protected readonly _code: string;
 	protected readonly _uid: string;
 	protected _host: string;
 	protected _isHost: boolean;
 	protected _players: Player[] = [];
 	protected _initialized = false;
+	private _status: GameStatus;
 	protected _initializedStatus = {
-		data:false,
-		players:false
-	}
+		data: false,
+		players: false,
+	};
 	private unsubscribeFunctions: (() => void)[] = [];
 	protected _connected = false;
 	private listeners: Partial<{
@@ -120,15 +123,19 @@ class Game {
 	/**
 	 * Connect to the server.
 	 */
-	public connect(): void {
+	public connect(doesNotExistHandler: () => void): void {
 		this.unsubscribeFunctions.push(firebase
 			.firestore()
 			.collection("games")
 			.doc(this.code)
 			.onSnapshot(
 				{ includeMetadataChanges: true },
-				(snapshot: firebase.firestore.DocumentSnapshot<GameData>) => {
+				(snapshot: firebase.firestore.DocumentSnapshot<GameData | null>) => {
 					if (snapshot.metadata.hasPendingWrites) return;
+					if (!snapshot.exists) {
+						doesNotExistHandler();
+						return;
+					}
 					this.updateData(snapshot.data());
 				}));
 		this.unsubscribeFunctions.push(firebase
@@ -161,9 +168,10 @@ class Game {
 	protected updateData(data: GameData): void {
 		this._host = data.host;
 		this._isHost = data.host == this.uid;
+		this._status = data.status;
 		this._initializedStatus = {
 			...this._initializedStatus,
-			data:true
+			data: true,
 		};
 		this.fireInitialized();
 
@@ -183,7 +191,7 @@ class Game {
 		}
 		this._initializedStatus = {
 			...this._initializedStatus,
-			players:true
+			players: true,
 		};
 		this.fireInitialized();
 		this.fireEvent("player_modified", new Event.PlayerModifiedEvent(this.players, oldPlayers));
@@ -195,7 +203,7 @@ class Game {
 	/**
 	 * Fires the initialized event if all data has been initialized and the game has not yet been initialized.
 	 */
-	protected fireInitialized():void {
+	protected fireInitialized(): void {
 		if (!this.initialized && this._initializedStatus.data && this._initializedStatus.players) {
 			this.fireEvent("initialized", new Event.InitializedEvent());
 			this._initialized = true;
@@ -312,6 +320,10 @@ class Game {
 
 	get uid(): string {
 		return this._uid;
+	}
+
+	get status(): GameStatus {
+		return this._status;
 	}
 
 	/**
