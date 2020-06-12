@@ -4,6 +4,7 @@ import Layout from "../components/layout";
 import SEO from "../components/seo";
 import firebase from "../firebase";
 import InputForm from "../components/InputForm";
+import { GameStatus } from "../game/Game";
 
 const JoinPage = (props: PageProps): ReactElement => {
 
@@ -46,6 +47,11 @@ const JoinPage = (props: PageProps): ReactElement => {
 						.then((snapshot) => {
 							if (!snapshot.exists) {
 								setError("No active game exists with that code. Either the game is now over, or the code was mistyped.");
+								setLoading(false);
+								return;
+							}
+							if (snapshot.data().status() !== GameStatus.IN_LOBBY) {
+								setError("This game is currently in progress. You cannot join until the game has returned to the lobby.");
 								setLoading(false);
 								return;
 							}

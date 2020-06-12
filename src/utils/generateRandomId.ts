@@ -33,7 +33,8 @@ async function generateRandomId(minLength = 5, tries = 0): Promise<string> {
   }
 
   // Use only capital letters to prevent ambiguity
-  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // does not include: Zero, letter O, I, 1
+  const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
   let result = "";
   for (let i = minLength; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return firebase.firestore()

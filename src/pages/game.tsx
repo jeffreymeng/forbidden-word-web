@@ -2,184 +2,16 @@ import React, { ReactElement } from "react";
 import Layout from "../components/layout";
 import SEO from "../components/seo";
 import Player, { PlayerStatus } from "../game/Player";
-import { Alert, Button, Modal, Spinner } from "react-bootstrap";
-import QRCode from "qrcode.react";
-import InputForm from "../components/InputForm";
-import Game from "../game/Game";
+import { Spinner } from "react-bootstrap";
+import Game, { GameStatus } from "../game/Game";
 import firebase from "../firebase";
 import validateName from "../utils/validateName";
 import { Link } from "gatsby";
 import { navigate } from "@reach/router";
-import NotFoundPage from "./404";
-
-function Share({ code }: { code: string }): ReactElement {
-	const [error, setError] = React.useState(false);
-	const [copyText, setCopyText] = React.useState("Copy Join Link");
-	const [showModal, setShowModal] = React.useState(false);
-	const handleClose = (): void => setShowModal(false);
-	const link = `https://forbiddenwords.jeffkmeng.com/game/${code}`;
-
-	return (<>
-		{/*
-		// @ts-ignore*/}
-		<p>{typeof window !== "undefined" && typeof navigator.share !== "undefined" ? <>
-			<a onClick={(): void => {
-				// alert("SHARE")
-				// @ts-ignore
-				navigator.share({
-					title: "Forbidden Words Game " + code,
-					text: "Join my forbidden words game! Code: " + code,
-					url: link,
-				});
-			}}>Share Link</a>
-		</> : <>Share:{" "}
-			<a onClick={(): void => {
-				try {
-					navigator.clipboard.writeText(link)
-						.then(() => setCopyText("Join Link Copied!"))
-						.catch(() => setCopyText("Link: " + link));
-				} catch {
-					setCopyText("Link: " + link);
-				}
-			}}>{copyText}</a>
-			{" "}| <a
-				href={`mailto:?subject=${encodeURIComponent("Join my forbidden words game " + code)
-				}&body=${encodeURIComponent("Join my forbidden words game! The code is " + code + ".\n" + link)}`}>Email
-				Join
-				Link</a>
-		</>}
-			{" "}| <a onClick={(): void => setShowModal(true)}>Show QR Code</a></p>
-		<Modal show={showModal} onHide={handleClose}>
-			<Modal.Header closeButton>
-				<Modal.Title>QR Code</Modal.Title>
-			</Modal.Header>
-			<Modal.Body className={"text-center"}>
-				<QRCode value={link} size={256}/>
-				<p className={"text-muted"} style={{
-					wordBreak: "break-all",
-				}}>{link}</p>
-				<p>Tip: Most phones allow you to open a QR code link by opening the camera app and pointing the camera
-					at the QR code.</p>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button variant="secondary" onClick={handleClose}>
-					Close
-				</Button>
-
-			</Modal.Footer>
-		</Modal>
-	</>);
-
-}
-
-function Lobby({ players, code, isHost, onKick }: { players: Player[]; code: string; isHost: boolean; onKick: (id: string) => Promise<void>; }): ReactElement {
-	const [kickData, setKickData] = React.useState({
-		name: "",
-		id: "",
-	});
-	const [kicking, updateKicking] = React.useReducer((state: string[], action: { type: "add"; id: string } | { type: "remove"; id: string; }) => {
-		console.log(state, action, state.filter(k => k !== action.id));
-		if (action.type == "add") {
-			return [...state, action.id];
-		} else {
-			return state.filter(k => k !== action.id);
-		}
-	}, []);
-	const [showKickModal, setShowKickModal] = React.useState(false);
-	const sortedPlayers = React.useMemo(() => players.sort((a, b): number => {
-		if (a.isLocalPlayer || b.isLocalPlayer) {
-			return a.isLocalPlayer ? -1 : 1;
-		} else if (a.isHost || b.isHost) {
-			return a.isHost ? -1 : 1;
-		} else {
-			return a.name.localeCompare(b.name);
-		}
-	}), [players]);
-	return (
-		<Layout>
-			<SEO title={"Game Lobby"}/>
-			<h3>Game Lobby (code: {code})</h3>
-			<Share code={code}/>
-			<ul>
-				{sortedPlayers.map(p => <li
-					key={p.id}>{p.name} {p.isHost && "(Host)"} {p.isLocalPlayer && "(You)"} {isHost && !p.isLocalPlayer && <>({
-					kicking.indexOf(p.id) > -1 ? <><Spinner animation={"border"} size={"sm"}/> Kicking...</> : <a
-						onClick={(): void => {
-							setKickData({
-								name: p.name,
-								id: p.id,
-							});
-							setShowKickModal(true);
-						}}>Kick</a>})</>}</li>)}
-			</ul>
-			{isHost && <Button block
-							   disabled={sortedPlayers.length < 2}>{sortedPlayers.length < 2 ? "At least 1 more player required to start game" : "Start Game"}</Button>}
-			<Modal show={showKickModal} onHide={(): void => {
-				setShowKickModal(false);
-			}}>
-				<Modal.Header closeButton>
-					<Modal.Title>Kick {kickData.name}?</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<h5>Are you sure you want to kick {kickData.name}?</h5>
-					<p>They will still be able to rejoin if the game has not started. Kicking is intended for removing
-						inactive players.</p>
-					<p>If you do not want this player in the game, create a new game with a different code.</p>
-				</Modal.Body>
-				<Modal.Footer>
-
-					<Button variant="secondary" onClick={(): void => {
-						setShowKickModal(false);
-					}}>
-						Cancel
-					</Button>
-					<Button variant="danger" onClick={(): void => {
-						const id = kickData.id;
-						updateKicking({ type: "add", id });
-						onKick(id)
-							.then(() => updateKicking({ type: "remove", id }))
-							.catch(() => updateKicking({ type: "remove", id }));
-						setShowKickModal(false);
-					}}>
-						Kick {kickData.name}
-					</Button>
-				</Modal.Footer>
-			</Modal>
-
-		</Layout>);
-}
-
-function NamePrompt({ onSubmit, code, validate, kicked }: {
-	onSubmit: (name: string) => Promise<void>;
-	code: string;
-	validate: (value: string, setError: (error: string) => void) => boolean;
-	kicked?: boolean;
-}): ReactElement {
-	return (
-		<Layout>
-			<SEO title={"Join Game"}/>
-			<h3>Join Game {code}</h3>
-			<Link to={"/join"}>Or join a different game</Link>
-			{kicked &&
-			<Alert variant={"danger"}>You&apos;ve been kicked by the host. You may still rejoin.</Alert>}
-			<InputForm
-				autoFocus
-				buttonText={"Join"}
-				label={"Your Name"}
-				onSubmit={(name, setError, setLoading): void => {
-					onSubmit(name).catch((error) => {
-						console.log(error);
-
-						setLoading(false);
-					});
-				}}
-				validate={validate}
-			/>
-
-			{/*First, challenge all players to make sure they are online. If any players are not, show a modal. */}
-		</Layout>
-	);
-}
+import Lobby from "../components/game/Lobby";
+import AssignWords from "../components/game/AssignWords";
+import NamePrompt from "../components/game/NamePrompt";
+import DisplayWords from "../components/game/DisplayWords";
 
 export default function GamePage(): ReactElement {
 	const code = typeof window === "undefined" ? "" : location.pathname.split("/").length >= 2 ? location.pathname.split("/")[2] : "";
@@ -190,15 +22,9 @@ export default function GamePage(): ReactElement {
 	const [loading, setLoading] = React.useState(true);
 	const [kicked, setKicked] = React.useState(false);
 	const [gameNotFound, setGameNotFound] = React.useState(false);
-	// React.useEffect(() => {
-	// // TODO: figure out if this  is ideal
-	// 	window.addEventListener('beforeunload', function (e) {
-	// 		// Cancel the event
-	// 		e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-	// 		// Chrome requires returnValue to be set
-	// 		e.returnValue = '';
-	// 	});
-	// }, []);
+	const [status, setStatus] = React.useState<GameStatus>(null);
+	const [targetWord, setTargetWord] = React.useState("");
+	const [words, setWords] = React.useState<null | Record<string, string>>(null);
 	React.useEffect(() => {
 		if (!code || !uid) return;
 		const gameInstance = new Game(code, uid);
@@ -221,6 +47,9 @@ export default function GamePage(): ReactElement {
 			console.log("Kicked!", gameInstance.players, uid);
 			setKicked(true);
 		});
+		gameInstance.on("status_changed", (e) => {
+			setStatus(e.status);
+		});
 		console.log(gameInstance);
 		return (): void => gameInstance.disconnect();
 	}, [code, uid]);
@@ -235,6 +64,15 @@ export default function GamePage(): ReactElement {
 		});
 		return (): void => unsubscribe();
 	}, []);
+	React.useEffect(() => {
+		if (status == GameStatus.TALKING && !words) {
+			game.getAssignedWords().then(words => {
+				console.log(words);
+				setWords(words);
+			});
+		}
+	}, [status]);
+
 	if (code !== code.toUpperCase()) {
 		navigate("/game/" + code.toUpperCase(), {
 			replace: true,
@@ -253,7 +91,8 @@ export default function GamePage(): ReactElement {
 		return <Layout>
 			<SEO title={"Game Not Found"}/>
 			<h3>404</h3>
-			<p>We couldn&apos;t find an active game at this location. Either you mistyped the link, or the game is now over.</p>
+			<p>We couldn&apos;t find an active game at this location. Either you mistyped the link, or the game is now
+				over.</p>
 			<p><Link to={"/join"}>Join a different game</Link> | <Link to={"/"}>Back to home page</Link></p>
 		</Layout>;
 	}
@@ -270,5 +109,59 @@ export default function GamePage(): ReactElement {
 			return validateName(name, setError);
 		}}/>;
 	}
-	return <Lobby players={players} code={code} isHost={game.isHost} onKick={(id): Promise<void> => game.kick(id)}/>;
+
+	if (status == GameStatus.STARTING) {
+		return (
+			<Layout>
+				<SEO title={"Loading"}/>
+				<p className="text-center">
+					<Spinner animation={"border"} as={"span"}/>
+				</p>
+				<p className={"text-center"}>Starting Game...</p>
+			</Layout>);
+	} else if (status == GameStatus.IN_LOBBY) {
+		return <Lobby players={players} code={code} onGameStart={(): Promise<void> => game.start()} isHost={game.isHost}
+					  onKick={(id): Promise<void> => game.kick(id)}/>;
+	} else if (status == GameStatus.CHOOSE_WORD) {
+		return <AssignWords uid={uid} assignments={game.assignments} players={game.players}
+							targetWord={targetWord}
+							onEdit={(): Promise<void> => game.unassignWord(game.assignments[uid])}
+							onSubmit={(value, setError, setSubmitting): void => {
+								const word = value.trim();
+								game.assignWord(game.assignments[uid], word)
+									.then(() => {
+										setTargetWord(word);
+										setSubmitting(false);
+									})
+									.catch((e) => {
+										console.log(e);
+										setError("An unknown error occurred. Please try again later.");
+									});
+							}
+							}/>;
+	} else if (status == GameStatus.TALKING) {
+		return <DisplayWords words={words} players={players}/>;
+	} else {
+		console.log(status, game);
+		return (
+			<Layout>
+				<SEO title={"Loading"}/>
+				<h3>Error: Unreachable State</h3>
+				<p>If you&apos;re seeing this page, then there has been an internal error in the application logic for
+					forbidden words.</p>
+				<p>You can alert me of this error by emailing <a
+					href={`mailto:forbiddenwords@jeffkmeng.com?subject=${encodeURIComponent("Unreachable State Error in game " + code)}&body=${encodeURIComponent(
+						"Here's the debug data that you asked for: " + btoa(JSON.stringify({
+							gameData: game,
+							navigator: navigator.userAgent,
+						})),
+					)}`}>forbiddenwords@jeffkmeng.com</a>. Please include a copy
+					of the below encoded debug data, which will be prepopulated if you email using the above link.</p>
+				<p style={{
+					wordBreak: "break-word",
+				}}>
+					{btoa(JSON.stringify({ gameData: game, navigator: navigator.userAgent }))}
+				</p>
+			</Layout>);
+	}
 }

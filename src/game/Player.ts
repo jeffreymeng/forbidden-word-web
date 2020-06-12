@@ -4,10 +4,16 @@ enum PlayerStatus {
 	ACTIVE = "active",
 }
 
+enum PlayerWordStatus {
+	CHOOSING = "choosing",
+	READY = "ready"
+}
+
 interface PlayerData {
 	name: string;
 	id: string;
 	status: PlayerStatus;
+	wordStatus: PlayerWordStatus;
 }
 
 class Player {
@@ -16,17 +22,22 @@ class Player {
 	public status: PlayerStatus;
 	public isHost: boolean;
 	public readonly isLocalPlayer: boolean;
+	public wordStatus?: PlayerWordStatus;
 
-	constructor(name: string, id: string, status: PlayerStatus, host = false, isLocalPlayer = false) {
+	constructor(name: string, id: string, status: PlayerStatus, host = false, isLocalPlayer = false, wordStatus: PlayerWordStatus = null) {
 		this.name = name;
 		this.id = id;
 		this.status = status;
 		this.isHost = host;
 		this.isLocalPlayer = isLocalPlayer;
+		this.wordStatus = wordStatus;
 	}
 
 	public equals(otherPlayer: Player): boolean {
-		return this.name == otherPlayer.name && this.id == otherPlayer.id && this.status == otherPlayer.status;
+		// check that the two objects are identical
+		return this.name === otherPlayer.name && this.id === otherPlayer.id && this.status === otherPlayer.status
+			&& this.isHost === otherPlayer.isHost && this.isLocalPlayer === otherPlayer.isLocalPlayer &&
+			this.wordStatus === otherPlayer.wordStatus;
 	}
 
 	/**
@@ -39,6 +50,7 @@ class Player {
 			name: this.name,
 			id: this.id,
 			status: this.status,
+			wordStatus: this.wordStatus,
 		};
 	}
 
@@ -58,5 +70,5 @@ class Player {
 
 }
 
-export { PlayerStatus, PlayerData, Player };
+export { PlayerStatus, PlayerWordStatus, PlayerData, Player };
 export default Player;
